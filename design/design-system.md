@@ -2,10 +2,10 @@
 
 ## Active Config
 
-| platform | theme    |
-| -------- | -------- |
-| web      | tactical |
-| mobile   | - |
+| platform | theme  |
+| -------- | ------ |
+| web      | fusion |
+| mobile   | -      |
 
 > To switch: update table above. Active path → `./[platform]/[theme]/`
 
@@ -27,5 +27,11 @@ Load on use: `DESIGN.md`, `variable.css`, `tailwind.css` — skip `design-token.
 
 | Platform | Theme    | Status   |
 | -------- | -------- | -------- |
-| web      | tactical | ✓ active |
-| web      | fusion   | inactive |
+| web      | fusion   | ✓ active |
+| web      | tactical | inactive |
+
+> Siaga Padi uses **fusion**, customised to the "Tani Ramah" direction — soft
+> natural colours (leaf green, rice yellow, warm earth), large corner radii,
+> illustrative icons, and thin shadows. Primary users are farmers with varied
+> digital literacy, often on a phone **outdoors in bright sunlight**, so colour
+> choices must clear WCAG AA contrast, not just look friendly.
