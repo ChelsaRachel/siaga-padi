@@ -18,6 +18,9 @@ CLAUDE.local.md
 /web/.env
 /web/.env.local
 
+# Test artifacts (vitest/jest coverage output, any app)
+coverage/
+
 # Flutter
 /mobile/.dart_tool/
 /mobile/.flutter-plugins
