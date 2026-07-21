@@ -1,0 +1,24 @@
+[
+  {
+    "context": "/api/v1/apps",
+    "target": "http://10.12.120.101:6601/",
+    "docs": "http://10.12.120.101:6601/docs",
+    "logLevel": "debug",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/v1/apps": ""
+    }
+  },
+  {
+    "context": "/cdn-assets",
+    "target": "https://assets.ebdeskfusion.ai",
+    "docs": "https://assets.ebdeskfusion.ai",
+    "logLevel": "debug",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/cdn-assets": ""
+    }
+  }
+]

@@ -1,0 +1,80 @@
+# Claude Code — personal settings
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Template
+.ai/boilerplates/web-reactjs/node_modules
+.ai/boilerplates/web-reactjs/build
+.ai/boilerplates/web-reactjs/package-lock.json
+
+
+# Rust
+/backend/target/
+/backend/.env
+
+# Node
+/web/node_modules/
+/web/dist/
+/web/.env
+/web/.env.local
+
+# Flutter
+/mobile/.dart_tool/
+/mobile/.flutter-plugins
+/mobile/.flutter-plugins-dependencies
+/mobile/build/
+/mobile/.env
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+**/__pycache__/
+*.pyc
+*.pyo
+__pycache__/
+.venv/
+.venv/
+
+# AI session state
+.ai-session.json
+.ai-sessions.json
+.ai-config.json
+# apps/*
+!apps/agent-memory.json
+!apps/agent-request.json
+!apps/orchestra.md
+!apps/.gitkeep
+
+# Secrets
+*.pem
+*.key
+*.p12
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# Claude logs
+.claude/logs/*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Local agent tooling & office-internal config — never publish.
+# (Shared skills under .claude/skills/ that are already tracked stay tracked;
+#  gitignore rules do not apply to files git already tracks.)
+.claude/
+.codex/
+.mcp.json
+AGENTS.md
+CLAUDE.md
+
+# NOTE: package-lock.json is intentionally COMMITTED so installs are
+# reproducible across the team and CI. Do not re-add it here.

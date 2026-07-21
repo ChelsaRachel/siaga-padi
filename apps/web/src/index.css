@@ -1,0 +1,46 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "react-perfect-scrollbar/dist/css/styles.css";
+
+/* Core design tokens and variables */
+@import "./styles/variable.css";
+
+/* Tailwind theme configuration */
+@import "./styles/tailwind.css";
+
+/* Components & Utilities */
+@import "./styles/components.css";
+
+/* ============================================
+  BASE LAYER
+  html font-size: 100% = 16px (default browser 16px × 1).
+  This makes 1rem = 16px — all design-token rem values
+  render at their intended pixel sizes.
+  Using % instead of fixed 16px respects user's browser
+  zoom/accessibility preferences.
+   ============================================ */
+@layer base {
+  * {
+    @apply border-border-primary outline-ring/50;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+.ps__rail-y { width:4px!important; background:transparent!important; right:2px!important; opacity:0!important; transition:opacity 0.2s ease!important; }
+.ps:hover>.ps__rail-y,.ps--focus>.ps__rail-y,.ps--scrolling-y>.ps__rail-y { opacity:1!important; }
+.ps__rail-y:hover,.ps__rail-y.ps--clicking { background:var(--color-border-primary)!important; width:6px!important; opacity:1!important; }
+.ps__thumb-y { width:4px!important; right:0!important; background:var(--color-border-primary)!important; transition:width 0.2s ease,background 0.2s ease!important; }
+.ps__thumb-y:hover,.ps__rail-y:hover>.ps__thumb-y,.ps__rail-y.ps--clicking>.ps__thumb-y { width:6px!important; background:var(--color-primary-base)!important; }

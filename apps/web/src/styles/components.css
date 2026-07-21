@@ -1,0 +1,99 @@
+/* Custom utility classes & UI overrides */
+
+/* ── Dialog animations ── */
+@keyframes dialog-overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-overlay-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-content-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes dialog-content-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+}
+
+.dialog-overlay {
+  will-change: opacity;
+}
+
+.dialog-overlay[data-state="open"] {
+  animation: dialog-overlay-in 150ms ease-out both;
+}
+
+.dialog-overlay[data-state="closed"] {
+  animation: dialog-overlay-out 150ms ease-in forwards;
+}
+
+.dialog-content {
+  will-change: transform, opacity;
+}
+
+.dialog-content[data-state="open"] {
+  animation: dialog-content-in 150ms ease-out both;
+}
+
+.dialog-content[data-state="closed"] {
+  animation: dialog-content-out 150ms ease-in forwards;
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-muted-foreground) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-muted-foreground);
+    border-radius: 3px;
+  }
+}
+
+/* Focus ring for accessibility */
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
