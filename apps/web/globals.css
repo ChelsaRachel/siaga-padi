@@ -1,0 +1,497 @@
+@import "tailwindcss";
+@import "shadcn/tailwind.css";
+
+/* ============================================
+   FUSION DESIGN SYSTEM - Design Tokens
+   Generated from design-tokens.json (Figma)
+
+   Strategy:
+   - :root          → BASE PALETTE (light values from JSON .light field)
+   - .dark          → BASE PALETTE overrides (dark values from JSON .dark field)
+   - Semantic tokens reference base palette vars → auto-switch on dark mode
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================
+   BASE PALETTE — LIGHT MODE
+   Source: design-tokens.json → base.[category].[scale].light
+   ============================================ */
+:root {
+  /* Neutral — same in both modes */
+  --base-neutral-50:  #ffffff;
+  --base-neutral-100: #f5f7fa;
+  --base-neutral-200: #e6e9f0;
+  --base-neutral-300: #b7babd;
+  --base-neutral-400: #989b9f;
+  --base-neutral-500: #7a7c81;
+  --base-neutral-600: #5b5d63;
+  --base-neutral-700: #2d2e33;
+  --base-neutral-800: #101014;
+  --base-neutral-900: #050505;
+
+  /* Primary (Blue) — light values */
+  --base-primary-50:  #e7eff8;   /* dark: #182133 */
+  --base-primary-100: #b4cdea;   /* dark: #224c7a */
+  --base-primary-200: #90b5df;   /* dark: #1b5ea9 */
+  --base-primary-300: #5d93d1;   /* dark: #0f5fba */
+  --base-primary-400: #3d7ec8;   /* dark: #3d7ec8 */
+  --base-primary-500: #0d5eba;   /* dark: #5d93d1 */
+  --base-primary-600: #0c56a9;   /* dark: #90b5df */
+  --base-primary-700: #094384;   /* dark: #b4cdea */
+  --base-primary-800: #073466;   /* dark: #e7eff8 */
+  --base-primary-900: #05274e;   /* dark: #fafcff */
+
+  /* Secondary (Orange) — light values */
+  --base-secondary-50:  #fff1e6;  /* dark: #6b2f00 */
+  --base-secondary-100: #ffd2b0;  /* dark: #8c3d00 */
+  --base-secondary-200: #ffbd8a;  /* dark: #b54f00 */
+  --base-secondary-300: #ff9f54;  /* dark: #e86500 */
+  --base-secondary-400: #ff8c33;  /* dark: #ff6f00 */
+  --base-secondary-500: #ff6f00;  /* dark: #ff8c33 */
+  --base-secondary-600: #e86500;  /* dark: #ff9f54 */
+  --base-secondary-700: #b54f00;  /* dark: #ffbd8a */
+  --base-secondary-800: #8c3d00;  /* dark: #ffd2b0 */
+  --base-secondary-900: #6b2f00;  /* dark: #fff1e6 */
+
+  /* Tertiary (Teal/Green) — light values */
+  --base-tertiary-50:  #e8f6f3;  /* dark: #094338 */
+  --base-tertiary-100: #b7e2d9;  /* dark: #0c5849 */
+  --base-tertiary-200: #94d3c7;  /* dark: #10725e */
+  --base-tertiary-300: #63bfad;  /* dark: #149279 */
+  --base-tertiary-400: #45b39d;  /* dark: #16a085 */
+  --base-tertiary-500: #16a085;  /* dark: #45b39d */
+  --base-tertiary-600: #149279;  /* dark: #63bfad */
+  --base-tertiary-700: #10725e;  /* dark: #94d3c7 */
+  --base-tertiary-800: #0c5849;  /* dark: #b7e2d9 */
+  --base-tertiary-900: #094338;  /* dark: #e8f6f3 */
+
+  /* Quaternary (Red/Pink) — light values */
+  --base-quaternary-50:  #f9e6eb;  /* dark: #540018 */
+  --base-quaternary-100: #eeb0c2;  /* dark: #6d001f */
+  --base-quaternary-200: #e58aa4;  /* dark: #8d0028 */
+  --base-quaternary-300: #d9547a;  /* dark: #b50034 */
+  --base-quaternary-400: #d23361;  /* dark: #c70039 */
+  --base-quaternary-500: #c70039;  /* dark: #d23361 */
+  --base-quaternary-600: #b50034;  /* dark: #d9547a */
+  --base-quaternary-700: #8d0028;  /* dark: #e58aa4 */
+  --base-quaternary-800: #6d001f;  /* dark: #eeb0c2 */
+  --base-quaternary-900: #540018;  /* dark: #f9e6eb */
+
+  /* Quinary (Purple) — light values */
+  --base-quinary-50:  #f4ecf7;  /* dark: #3c1d49 */
+  --base-quinary-100: #dcc5e6;  /* dark: #dcc5e6 */
+  --base-quinary-200: #cba9d9;  /* dark: #cba9d9 */
+  --base-quinary-300: #b382c8;  /* dark: #b382c8 */
+  --base-quinary-400: #a569bd;  /* dark: #a569bd */
+  --base-quinary-500: #8e44ad;  /* dark: #8e44ad */
+  --base-quinary-600: #813e9d;  /* dark: #813e9d */
+  --base-quinary-700: #65307b;  /* dark: #cba9d9 */
+  --base-quinary-800: #4e255f;  /* dark: #dcc5e6 */
+  --base-quinary-900: #3c1d49;  /* dark: #f4ecf7 */
+
+  /* State: Warning — light values */
+  --base-warning-50:  #fff7e6;  /* dark: #6b4a02 */
+  --base-warning-100: #ffe6b2;  /* dark: #8c6003 */
+  --base-warning-200: #ffda8c;  /* dark: #b57c04 */
+  --base-warning-300: #ffc958;  /* dark: #e89f05 */
+  --base-warning-400: #ffbf37;  /* dark: #ffaf05 */
+  --base-warning-500: #ffaf05;  /* dark: #ffbf37 */
+  --base-warning-600: #e89f05;  /* dark: #ffc958 */
+  --base-warning-700: #b57c04;  /* dark: #ffda8c */
+  --base-warning-800: #8c6003;  /* dark: #ffe6b2 */
+  --base-warning-900: #6b4a02;  /* dark: #fff7e6 */
+
+  /* State: Info — light values */
+  --base-info-50:  #e6f1f7;  /* dark: #003249 */
+  --base-info-100: #b0d5e6;  /* dark: #01415f */
+  --base-info-200: #8ac0d9;  /* dark: #01547b */
+  --base-info-300: #55a4c8;  /* dark: #016c9d */
+  --base-info-400: #3492bd;  /* dark: #0177ad */
+  --base-info-500: #0177ad;  /* dark: #3492bd */
+  --base-info-600: #016c9d;  /* dark: #55a4c8 */
+  --base-info-700: #01547b;  /* dark: #8ac0d9 */
+  --base-info-800: #01415f;  /* dark: #b0d5e6 */
+  --base-info-900: #003249;  /* dark: #e6f1f7 */
+
+  /* State: Success — light values */
+  --base-success-50:  #e8f2ea;  /* dark: #093414 */
+  --base-success-100: #b7d6bf;  /* dark: #0c441a */
+  --base-success-200: #94c3a0;  /* dark: #105822 */
+  --base-success-300: #63a774;  /* dark: #14712c */
+  --base-success-400: #459659;  /* dark: #167c30 */
+  --base-success-500: #167c30;  /* dark: #459659 */
+  --base-success-600: #14712c;  /* dark: #63a774 */
+  --base-success-700: #105822;  /* dark: #94c3a0 */
+  --base-success-800: #0c441a;  /* dark: #b7d6bf */
+  --base-success-900: #093414;  /* dark: #e8f2ea */
+
+  /* State: Error — light values */
+  --base-error-50:  #fae9e9;  /* dark: #581010 */
+  --base-error-100: #f1bcbc;  /* dark: #731515 */
+  --base-error-200: #ea9c9c;  /* dark: #941c1c */
+  --base-error-300: #e06e6e;  /* dark: #be2323 */
+  --base-error-400: #da5252;  /* dark: #d12727 */
+  --base-error-500: #d12727;  /* dark: #da5252 */
+  --base-error-600: #be2323;  /* dark: #e06e6e */
+  --base-error-700: #941c1c;  /* dark: #ea9c9c */
+  --base-error-800: #731515;  /* dark: #f1bcbc */
+  --base-error-900: #581010;  /* dark: #fae9e9 */
+}
+
+/* ============================================
+   BASE PALETTE — DARK MODE OVERRIDES
+   Source: design-tokens.json → base.[category].[scale].dark
+   ============================================ */
+.dark {
+  /* Neutral — same in both modes (no override needed) */
+
+  /* Primary — dark values */
+  --base-primary-50:  #182133;
+  --base-primary-100: #224c7a;
+  --base-primary-200: #1b5ea9;
+  --base-primary-300: #0f5fba;
+  --base-primary-400: #3d7ec8;
+  --base-primary-500: #5d93d1;
+  --base-primary-600: #90b5df;
+  --base-primary-700: #b4cdea;
+  --base-primary-800: #e7eff8;
+  --base-primary-900: #fafcff;
+
+  /* Secondary — dark values */
+  --base-secondary-50:  #6b2f00;
+  --base-secondary-100: #8c3d00;
+  --base-secondary-200: #b54f00;
+  --base-secondary-300: #e86500;
+  --base-secondary-400: #ff6f00;
+  --base-secondary-500: #ff8c33;
+  --base-secondary-600: #ff9f54;
+  --base-secondary-700: #ffbd8a;
+  --base-secondary-800: #ffd2b0;
+  --base-secondary-900: #fff1e6;
+
+  /* Tertiary — dark values */
+  --base-tertiary-50:  #094338;
+  --base-tertiary-100: #0c5849;
+  --base-tertiary-200: #10725e;
+  --base-tertiary-300: #149279;
+  --base-tertiary-400: #16a085;
+  --base-tertiary-500: #45b39d;
+  --base-tertiary-600: #63bfad;
+  --base-tertiary-700: #94d3c7;
+  --base-tertiary-800: #b7e2d9;
+  --base-tertiary-900: #e8f6f3;
+
+  /* Quaternary — dark values */
+  --base-quaternary-50:  #540018;
+  --base-quaternary-100: #6d001f;
+  --base-quaternary-200: #8d0028;
+  --base-quaternary-300: #b50034;
+  --base-quaternary-400: #c70039;
+  --base-quaternary-500: #d23361;
+  --base-quaternary-600: #d9547a;
+  --base-quaternary-700: #e58aa4;
+  --base-quaternary-800: #eeb0c2;
+  --base-quaternary-900: #f9e6eb;
+
+  /* Quinary — dark values */
+  --base-quinary-50:  #3c1d49;
+  --base-quinary-100: #dcc5e6;
+  --base-quinary-200: #cba9d9;
+  --base-quinary-300: #b382c8;
+  --base-quinary-400: #a569bd;
+  --base-quinary-500: #8e44ad;
+  --base-quinary-600: #813e9d;
+  --base-quinary-700: #cba9d9;
+  --base-quinary-800: #dcc5e6;
+  --base-quinary-900: #f4ecf7;
+
+  /* State: Warning — dark values */
+  --base-warning-50:  #6b4a02;
+  --base-warning-100: #8c6003;
+  --base-warning-200: #b57c04;
+  --base-warning-300: #e89f05;
+  --base-warning-400: #ffaf05;
+  --base-warning-500: #ffbf37;
+  --base-warning-600: #ffc958;
+  --base-warning-700: #ffda8c;
+  --base-warning-800: #ffe6b2;
+  --base-warning-900: #fff7e6;
+
+  /* State: Info — dark values */
+  --base-info-50:  #003249;
+  --base-info-100: #01415f;
+  --base-info-200: #01547b;
+  --base-info-300: #016c9d;
+  --base-info-400: #0177ad;
+  --base-info-500: #3492bd;
+  --base-info-600: #55a4c8;
+  --base-info-700: #8ac0d9;
+  --base-info-800: #b0d5e6;
+  --base-info-900: #e6f1f7;
+
+  /* State: Success — dark values */
+  --base-success-50:  #093414;
+  --base-success-100: #0c441a;
+  --base-success-200: #105822;
+  --base-success-300: #14712c;
+  --base-success-400: #167c30;
+  --base-success-500: #459659;
+  --base-success-600: #63a774;
+  --base-success-700: #94c3a0;
+  --base-success-800: #b7d6bf;
+  --base-success-900: #e8f2ea;
+
+  /* State: Error — dark values */
+  --base-error-50:  #581010;
+  --base-error-100: #731515;
+  --base-error-200: #941c1c;
+  --base-error-300: #be2323;
+  --base-error-400: #d12727;
+  --base-error-500: #da5252;
+  --base-error-600: #e06e6e;
+  --base-error-700: #ea9c9c;
+  --base-error-800: #f1bcbc;
+  --base-error-900: #fae9e9;
+}
+
+/* ============================================
+   SEMANTIC TOKENS
+   Reference base palette → auto-switch with dark mode
+   Source: design-tokens.json → semantic section
+   ============================================ */
+:root {
+  /* Typography */
+  --font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Border Radius — from design-tokens.json → borderRadius */
+  --radius:      6px;   /* md — also used as Shadcn base --radius */
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   10px;
+  --radius-2xl:  12px;
+  --radius-3xl:  16px;
+  --radius-full: 360px;
+
+  /* Spacing — from design-tokens.json → spacing */
+  --spacing-1:   4px;
+  --spacing-1-5: 6px;
+  --spacing-2:   8px;
+  --spacing-2-5: 10px;
+  --spacing-3:   12px;
+  --spacing-3-5: 14px;
+  --spacing-4:   16px;
+  --spacing-5:   20px;
+  --spacing-6:   24px;
+  --spacing-8:   32px;
+  --spacing-10:  40px;
+
+  /* ── semantic.background ── */
+  --bg-primary:   var(--base-neutral-50);   /* semantic.background.primary  → {base.neutral.50}  */
+  --bg-secondary: var(--base-neutral-100);  /* semantic.background.secondary → {base.neutral.100} */
+
+  /* ── semantic.border ── */
+  --border-primary:   var(--base-neutral-200); /* semantic.border.primary   → {base.neutral.200} */
+  --border-secondary: var(--base-neutral-300); /* semantic.border.secondary → {base.neutral.300} */
+
+  /* ── semantic.font ── */
+  --fg-primary:     var(--base-neutral-900); /* semantic.font.primary      → {base.neutral.900} */
+  --fg-secondary:   var(--base-neutral-600); /* semantic.font.secondary    → {base.neutral.600} */
+  --fg-placeholder: var(--base-neutral-500); /* semantic.font.placeholder  → {base.neutral.500} */
+  --fg-disabled:    var(--base-neutral-400); /* semantic.font.disabled     → {base.neutral.400} */
+  --fg-on-accent:   var(--base-neutral-50);  /* semantic.font.onAccent     → {base.neutral.50}  */
+
+  /* ── semantic.primary ── */
+  --brand-primary-light: var(--base-primary-50);   /* semantic.primary.light → {base.primary.50}  */
+  --brand-primary-soft:  var(--base-primary-300);  /* semantic.primary.soft  → {base.primary.300} */
+  --brand-primary-base:  var(--base-primary-500);  /* semantic.primary.base  → {base.primary.500} */
+  --brand-primary-bold:  var(--base-primary-700);  /* semantic.primary.bold  → {base.primary.700} */
+  --brand-primary-deep:  var(--base-primary-900);  /* semantic.primary.deep  → {base.primary.900} */
+
+  /* ── semantic.secondary ── */
+  --brand-secondary-light: var(--base-secondary-50);
+  --brand-secondary-soft:  var(--base-secondary-300);
+  --brand-secondary-base:  var(--base-secondary-500);
+  --brand-secondary-bold:  var(--base-secondary-700);
+  --brand-secondary-deep:  var(--base-secondary-900);
+
+  /* ── semantic.tertiary ── */
+  --brand-tertiary-light: var(--base-tertiary-50);
+  --brand-tertiary-soft:  var(--base-tertiary-300);
+  --brand-tertiary-base:  var(--base-tertiary-500);
+  --brand-tertiary-bold:  var(--base-tertiary-700);
+  --brand-tertiary-deep:  var(--base-tertiary-900);
+
+  /* ── semantic.quaternary ── */
+  --brand-quaternary-light: var(--base-quaternary-50);
+  --brand-quaternary-soft:  var(--base-quaternary-300);
+  --brand-quaternary-base:  var(--base-quaternary-500);
+  --brand-quaternary-bold:  var(--base-quaternary-700);
+  --brand-quaternary-deep:  var(--base-quaternary-900);
+
+  /* ── semantic.quinary ── */
+  --brand-quinary-light: var(--base-quinary-50);
+  --brand-quinary-soft:  var(--base-quinary-300);
+  --brand-quinary-base:  var(--base-quinary-500);
+  --brand-quinary-bold:  var(--base-quinary-700);
+  --brand-quinary-deep:  var(--base-quinary-900);
+
+  /* ── semantic.state ── */
+  --state-success-base:  var(--base-success-500);  /* semantic.state.success.base  → {base.state.success.500} */
+  --state-success-light: var(--base-success-50);   /* semantic.state.success.light → {base.state.success.50}  */
+  --state-error-base:    var(--base-error-500);
+  --state-error-light:   var(--base-error-50);
+  --state-info-base:     var(--base-info-500);
+  --state-info-light:    var(--base-info-50);
+  --state-warning-base:  var(--base-warning-500);
+  --state-warning-light: var(--base-warning-50);
+
+  /* ============================================
+     SHADCN UI VARIABLE MAPPING
+     Maps Fusion semantic tokens → Shadcn component vars
+     ============================================ */
+  --background:               var(--base-neutral-50);
+  --foreground:               var(--base-neutral-900);
+  --card:                     var(--base-neutral-50);
+  --card-foreground:          var(--base-neutral-900);
+  --popover:                  var(--base-neutral-50);
+  --popover-foreground:       var(--base-neutral-900);
+  --primary:                  var(--base-primary-500);
+  --primary-foreground:       var(--base-neutral-50);
+  --secondary:                var(--base-neutral-100);
+  --secondary-foreground:     var(--base-neutral-900);
+  --muted:                    var(--base-neutral-100);
+  --muted-foreground:         var(--base-neutral-500);
+  --accent:                   var(--base-primary-50);
+  --accent-foreground:        var(--base-primary-700);
+  --destructive:              var(--base-error-500);
+  --border:                   var(--base-neutral-200);
+  --input:                    var(--base-neutral-200);
+  --ring:                     var(--base-primary-300);
+  --chart-1:                  var(--base-primary-500);
+  --chart-2:                  var(--base-tertiary-500);
+  --chart-3:                  var(--base-warning-500);
+  --chart-4:                  var(--base-quaternary-500);
+  --chart-5:                  var(--base-quinary-500);
+  --sidebar:                  var(--base-neutral-100);
+  --sidebar-foreground:       var(--base-neutral-900);
+  --sidebar-primary:          var(--base-primary-500);
+  --sidebar-primary-foreground: var(--base-neutral-50);
+  --sidebar-accent:           var(--base-primary-50);
+  --sidebar-accent-foreground: var(--base-primary-700);
+  --sidebar-border:           var(--base-neutral-200);
+  --sidebar-ring:             var(--base-primary-300);
+}
+
+/* ============================================
+   DARK MODE — SHADCN VARIABLE OVERRIDES
+   Uses dark base palette vars (already overridden above in .dark)
+   Only semantic meaning changes are defined here
+   ============================================ */
+.dark {
+  --background:               var(--base-neutral-800);
+  --foreground:               var(--base-neutral-50);
+  --card:                     var(--base-neutral-700);
+  --card-foreground:          var(--base-neutral-50);
+  --popover:                  var(--base-neutral-700);
+  --popover-foreground:       var(--base-neutral-50);
+  --primary:                  var(--base-primary-500); /* #5d93d1 in dark */
+  --primary-foreground:       var(--base-neutral-800);
+  --secondary:                var(--base-neutral-700);
+  --secondary-foreground:     var(--base-neutral-50);
+  --muted:                    var(--base-neutral-700);
+  --muted-foreground:         var(--base-neutral-400);
+  --accent:                   var(--base-primary-50);  /* #182133 in dark */
+  --accent-foreground:        var(--base-primary-700); /* #b4cdea in dark */
+  --destructive:              var(--base-error-500);   /* #da5252 in dark */
+  --border:                   var(--base-neutral-700);
+  --input:                    var(--base-neutral-700);
+  --ring:                     var(--base-primary-300); /* #0f5fba in dark */
+  --chart-1:                  var(--base-primary-500); /* #5d93d1 in dark */
+  --chart-2:                  var(--base-tertiary-500);
+  --chart-3:                  var(--base-warning-500);
+  --chart-4:                  var(--base-quaternary-500);
+  --chart-5:                  var(--base-quinary-500);
+  --sidebar:                  var(--base-neutral-700);
+  --sidebar-foreground:       var(--base-neutral-50);
+  --sidebar-primary:          var(--base-primary-500);
+  --sidebar-primary-foreground: var(--base-neutral-800);
+  --sidebar-accent:           var(--base-primary-50);
+  --sidebar-accent-foreground: var(--base-primary-700);
+  --sidebar-border:           var(--base-neutral-700);
+  --sidebar-ring:             var(--base-primary-300);
+
+  /* Update semantic helpers for dark */
+  --bg-primary:   var(--base-neutral-800);
+  --bg-secondary: var(--base-neutral-700);
+  --border-primary:   var(--base-neutral-700);
+  --border-secondary: var(--base-neutral-600);
+  --fg-primary:     var(--base-neutral-50);
+  --fg-secondary:   var(--base-neutral-300);
+  --fg-placeholder: var(--base-neutral-400);
+  --fg-disabled:    var(--base-neutral-500);
+  --fg-on-accent:   var(--base-neutral-800);
+}
+
+/* ============================================
+   TAILWIND v4 @theme — Exposes vars to Tailwind classes
+   ============================================ */
+@theme inline {
+  --font-sans: var(--font-family-base);
+
+  --radius-sm:  var(--radius-sm);
+  --radius-md:  var(--radius-md);
+  --radius-lg:  var(--radius-lg);
+  --radius-xl:  var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-3xl: var(--radius-3xl);
+
+  --color-background:                  var(--background);
+  --color-foreground:                  var(--foreground);
+  --color-card:                        var(--card);
+  --color-card-foreground:             var(--card-foreground);
+  --color-popover:                     var(--popover);
+  --color-popover-foreground:          var(--popover-foreground);
+  --color-primary:                     var(--primary);
+  --color-primary-foreground:          var(--primary-foreground);
+  --color-secondary:                   var(--secondary);
+  --color-secondary-foreground:        var(--secondary-foreground);
+  --color-muted:                       var(--muted);
+  --color-muted-foreground:            var(--muted-foreground);
+  --color-accent:                      var(--accent);
+  --color-accent-foreground:           var(--accent-foreground);
+  --color-destructive:                 var(--destructive);
+  --color-border:                      var(--border);
+  --color-input:                       var(--input);
+  --color-ring:                        var(--ring);
+  --color-chart-1:                     var(--chart-1);
+  --color-chart-2:                     var(--chart-2);
+  --color-chart-3:                     var(--chart-3);
+  --color-chart-4:                     var(--chart-4);
+  --color-chart-5:                     var(--chart-5);
+  --color-sidebar:                     var(--sidebar);
+  --color-sidebar-foreground:          var(--sidebar-foreground);
+  --color-sidebar-primary:             var(--sidebar-primary);
+  --color-sidebar-primary-foreground:  var(--sidebar-primary-foreground);
+  --color-sidebar-accent:              var(--sidebar-accent);
+  --color-sidebar-accent-foreground:   var(--sidebar-accent-foreground);
+  --color-sidebar-border:              var(--sidebar-border);
+  --color-sidebar-ring:                var(--sidebar-ring);
+}
+
+/* ============================================
+   BASE LAYER
+   ============================================ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-family-base);
+  }
+}
