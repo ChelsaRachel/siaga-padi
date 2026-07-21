@@ -1,24 +1,13 @@
 [
   {
     "context": "/api/v1/apps",
-    "target": "http://10.12.120.101:6601/",
-    "docs": "http://10.12.120.101:6601/docs",
+    "target": "http://localhost:8000/",
+    "docs": "Placeholder — point at the Siaga Padi FastAPI backend once it exists (apps/backend). No backend is running yet; API calls will fail until then.",
     "logLevel": "debug",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
       "^/api/v1/apps": ""
-    }
-  },
-  {
-    "context": "/cdn-assets",
-    "target": "https://assets.ebdeskfusion.ai",
-    "docs": "https://assets.ebdeskfusion.ai",
-    "logLevel": "debug",
-    "secure": false,
-    "changeOrigin": true,
-    "pathRewrite": {
-      "^/cdn-assets": ""
     }
   }
 ]
