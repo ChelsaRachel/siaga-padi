@@ -4,30 +4,71 @@ Copy everything in the block below as the first message to the new agent.
 
 ---
 
-You are continuing **Siaga Padi** — a rice pest & disease early-warning + advisory **PWA** for farmers (petani) and extension workers (penyuluh), built web-first from the Web PWA FRD.
+You are continuing **Siaga Padi** — a rice pest & disease early-warning + advisory **PWA**
+for farmers (petani) and extension workers (penyuluh), built web-first from the Web PWA FRD.
 
-WORK DIR: `/Users/fahrialfiansyah121gmail.com/Documents/projects/siaga-padi` (trunk = `development`, all bootstrap PRs merged; remote `origin` on GitHub; do NOT push without asking; GitHub default branch is still `dev-chelsa` — pending housekeeping).
+WORK DIR: `/Users/fahrialfiansyah121gmail.com/Documents/projects/siaga-padi`.
+Trunk is `development` at `a376481`; the current working branch is
+`feat/offline-pwa-support` with the FR-014 frontend implementation and refreshed handover
+docs still uncommitted. Remote `origin` is on GitHub. **Do not discard, commit, push, or
+rewrite these changes without reviewing the worktree and asking the user first.** GitHub's
+default branch is still `dev-chelsa` and needs separate repository housekeeping.
 
 FIRST, read these in order (do not skip):
-1. `docs/HANDOVER.md` — full state snapshot (orientation, verified done, env, gotchas, next, blockers).
-2. `docs/FRD_Siaga_Padi_Web_PWA_MVP_v0.2.0.md` — the product spec you build to.
-3. `apps/web/AI_GUIDE.md` — frontend conventions you MUST follow.
-4. `design/web/fusion/DESIGN.md` — binding design + UX rules ("Tani Ramah").
-5. `CONTRIBUTING.md` — team git workflow (feature branches, PR to development, keep branches, no trailers).
+
+1. `docs/HANDOVER.md` — full state snapshot, verification evidence, remaining work, blockers.
+2. `docs/FRD_Siaga_Padi_Web_PWA_MVP_v0.2.0.md` — the in-scope product specification.
+3. `apps/web/AI_GUIDE.md` — binding frontend conventions.
+4. `design/web/fusion/DESIGN.md` — binding "Tani Ramah" design and UX rules.
+5. `CONTRIBUTING.md` — team Git workflow.
 
 KEY FACTS:
-- `apps/web/` runs: `cd apps/web && npm run dev` (Node 20 auto-switches via fnm; Rspack picks a free port, last 8081; verify title "Siaga Padi" + HTTP 200). No test runner exists yet (add Vitest). `npm run build:prod` never exercised.
-- Live CSS tokens: `apps/web/src/styles/variable.css` (WCAG-AA-verified Tani Ramah palette, light+dark). `apps/web/globals.css` is dead code — never edit it.
-- **PWA is not functional yet**: `sw.js` is uncompiled Workbox source, workbox not installed — FR-014 (offline queue) is the flagship pending feature.
-- Docker is NOT installed → backend/Supabase track fully blocked until the user installs it. Scaffolding new stacks needs a private network/VPN (script under `.claude/skills/bootstrap-project/`, gitignored).
-- npm audit: 8 moderate remain, all needing MAJOR bumps — never `npm audit fix --force` casually.
-- **Vocabulary rule:** workplace-identifying words are banned in every repo artifact; use "external/private/internal". Gate every commit + message with: `git grep -iE '\boff[i]ce\b|\bkant[o]r\b' -- ':!*.lock'` (bracket-regex keeps the gate itself clean; `officer` domain terms are fine).
-- Local branch `dev-fahri` contains outdated docs with pre-rule vocabulary — never push it.
-- The upstream boilerplate leaks a live Mapbox token — secret-scan any future scaffold output before committing (GitHub Push Protection is active and will block).
 
-RULES: Follow AI_GUIDE strictly (service layer only for HTTP, Zustand for shared state, `@/` imports, `REACT_` env prefix, dynamic-filter module for all filters, config-driven menus). Follow CONTRIBUTING (feature branch off fresh `development`, Conventional Commits, no watermark trailers, narrow staging, keep branches after merge). Always `git fetch` and re-check `origin/development` before any rebase/rewrite. One open decision belongs to the user: repo recreation vs accepting pre-rule vocabulary residue in merged-PR history — ask before touching history.
+- `apps/web/` runs with Node 20 via fnm. `npm run build:prod` now passes and produces a
+  compiled `build/service-worker.js`; the main CSS build still emits two pre-existing
+  `postcss-calc` warnings.
+- **FR-014 frontend PWA support is implemented locally:** Workbox precaching, an opt-in
+  IndexedDB mutation queue, Background Sync, seven-day retention, idempotency keys,
+  bounded retries, conflict/failed persistence, worker messaging, Zustand status, and an
+  honest Indonesian "menunggu terkirim" banner.
+- Browser verification passed with a fresh Chrome profile: the app shell reloaded while
+  the preview server was stopped, a synthetic opted-in mutation returned HTTP 202, and
+  three unsuccessful replay attempts moved it to the visible failed/retry state.
+- The current app only has auth/dashboard screens. No real case/photo mutation exists yet,
+  so future form services must explicitly use `queueableRequest()` or
+  `queueableUploadRequest()`; normal auth, reads, and destructive calls must not be queued.
+- The production precache currently includes 47 assets (~21.5 MB), mostly due to existing
+  bundled font/icon assets. Treat size reduction as a later performance task.
+- No test runner exists yet. Add Vitest before expanding behavior; the repository target is
+  80% coverage.
+- Docker is not installed, so backend/Supabase work remains blocked. New stack scaffolding
+  also requires access to the private scaffold service/network.
+- `npm audit` reports 8 moderate findings and no high/critical findings. Available fixes
+  require major upgrades; never run `npm audit fix --force` casually.
+- **Vocabulary rule:** workplace-identifying words are banned in repository artifacts; use
+  "external", "private", or "internal". Before committing, run:
+  `git grep -iE '\boff[i]ce\b|\bkant[o]r\b' -- ':!*.lock'`.
+- The upstream boilerplate previously exposed a live Mapbox token. Secret-scan any future
+  scaffold output before committing; GitHub Push Protection is active.
 
-NEXT TASK: build **FR-014 offline PWA support**: add workbox deps + Rspack InjectManifest wiring so `sw.js` actually compiles and registers, then an IndexedDB draft queue with Background Sync and honest "menunggu terkirim" UI per DESIGN.md rule 6. Then the broader sequence in HANDOVER §6 (Vitest → first FRD screens with bottom-nav shell → backend once Docker exists).
-Verify each visible change (`npm run dev` → check the served page; for the SW, verify registration in a production build/preview). Confirm you've read the docs above, then proceed.
+RULES: Follow `AI_GUIDE.md` strictly (service layer only for HTTP, Zustand for shared state,
+`@/` imports, `REACT_` env prefix, dynamic-filter module for all filters, config-driven
+menus). Follow `CONTRIBUTING.md` (feature branches from fresh `development`, Conventional
+Commits, no watermark trailers, narrow staging, keep branches after merge). Always fetch
+and re-check `origin/development` before rebasing or rewriting. One open decision belongs to
+the user: repository recreation versus accepting pre-rule vocabulary residue in merged-PR
+history—ask before touching history.
+
+NEXT:
+
+1. Inspect `git status` and the FR-014 diff; do not restart or overwrite the implementation.
+2. If the user approves, narrowly stage and commit the PWA + documentation slice, then ask
+   separately before pushing.
+3. Add Vitest and focused tests for PWA config/storage/store/service behavior.
+4. Build the first FRD app shell and capture → triage → recommendation skeleton, including
+   the mobile bottom navigation required by `DESIGN.md`.
+5. Resume backend work only after Docker becomes available.
+
+Report what you verified and any blockers before proceeding.
 
 ---
