@@ -1,0 +1,23 @@
+# Supabase CLI config — overridden per environment.
+# Run `supabase init` to regenerate; the migrations dir is the source of truth.
+
+project_id = "be-python"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = false  # Custom JWT lives in be-python — Supabase Auth disabled.
