@@ -5,9 +5,10 @@
     "dev": "cross-env NODE_ENV=development rspack serve --config rspack.dev.ts",
     "start": "cross-env NODE_ENV=development rspack serve --config rspack.dev.ts",
     "start:prod": "node ./server.js",
-    "build:staging": "NODE_ENV=production ENV_TARGET=staging rspack build --config rspack.prod.ts && gzipper compress --verbose ./build",
-    "build:prod": "cross-env NODE_ENV=production ENV_TARGET=production rspack build --config rspack.prod.ts && gzipper compress --verbose ./build",
-    "build:prod.analyze": "NODE_ENV=production-analyze rspack build --config rspack.prod.ts && gzipper compress --verbose ./build",
+    "build:pwa": "cross-env NODE_ENV=production rspack build --config rspack.sw.ts && node scripts/inject-service-worker.mjs",
+    "build:staging": "cross-env NODE_ENV=production ENV_TARGET=staging rspack build --config rspack.prod.ts && npm run build:pwa && gzipper compress --verbose ./build",
+    "build:prod": "cross-env NODE_ENV=production ENV_TARGET=production rspack build --config rspack.prod.ts && npm run build:pwa && gzipper compress --verbose ./build",
+    "build:prod.analyze": "cross-env NODE_ENV=production-analyze ENV_TARGET=production rspack build --config rspack.prod.ts && npm run build:pwa && gzipper compress --verbose ./build",
     "find-deadcode": "ts-prune"
   },
   "dependencies": {
@@ -91,6 +92,12 @@
     "wavesurfer.js": "^7.7.14",
     "web-vitals": "^3.5.2",
     "webpack-merge": "^6.0.1",
+    "workbox-background-sync": "^7.4.1",
+    "workbox-core": "^7.4.1",
+    "workbox-expiration": "^7.4.1",
+    "workbox-precaching": "^7.4.1",
+    "workbox-routing": "^7.4.1",
+    "workbox-strategies": "^7.4.1",
     "yup": "^1.4.0",
     "zustand": "^4.5.5"
   },
@@ -149,6 +156,7 @@
     "ts-loader": "^9.2.5",
     "ts-node": "^10.2.1",
     "typescript": "^5.5.2",
-    "webpack-bundle-analyzer": "^4.4.2"
+    "webpack-bundle-analyzer": "^4.4.2",
+    "workbox-build": "^7.4.1"
   }
 }

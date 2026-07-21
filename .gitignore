@@ -71,7 +71,7 @@ logs/
 # (Shared skills under .claude/skills/ that are already tracked stay tracked;
 #  gitignore rules do not apply to files git already tracks.)
 .claude/
-.codex/
+.agents/
 .mcp.json
 AGENTS.md
 CLAUDE.md
