@@ -25,6 +25,14 @@ Yup.setLocale({
 
 import './index.css'
 
+// Phosphor icon CSS — bundled locally (replaces the former /cdn-assets proxy).
+// Only the weights renderIcon() supports; `thin` is unused and excluded.
+import '@phosphor-icons/web/regular'
+import '@phosphor-icons/web/fill'
+import '@phosphor-icons/web/bold'
+import '@phosphor-icons/web/light'
+import '@phosphor-icons/web/duotone'
+
 moment.tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format()
 
 const root = ReactDOM.createRoot(document.getElementById('root') as any)

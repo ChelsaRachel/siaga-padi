@@ -67,7 +67,7 @@ logs/
 .vscode/
 *.swp
 
-# Local agent tooling & office-internal config — never publish.
+# Local agent tooling & private internal config — never publish.
 # (Shared skills under .claude/skills/ that are already tracked stay tracked;
 #  gitignore rules do not apply to files git already tracks.)
 .claude/

@@ -1,95 +1,32 @@
 ---
 name: icon
-description: Implementation guide for using icons. Phosphor Web (CSS) is the only allowed icon source. Covers direct usage, renderIcon utility, weight variants, menu config wiring, and CDN proxy configuration.
+description: Implementation guide for using icons. Phosphor Web (CSS) is the only allowed icon source. Covers direct usage, renderIcon utility, weight variants, and menu config wiring. Icons are bundled locally via the @phosphor-icons/web npm package.
 ---
 
-# Icon Skill (React / TypeScript / Next.js)
-
----
-
-## Setup (already done in boilerplate — do not touch)
-
-Phosphor CSS is loaded via `<link>` tags in `index.html` (for Vite) or `layout.tsx` (for Next.js), served from local assets:
-
-```html
-<link rel="stylesheet" type="text/css" href="/cdn-assets/icons/@phosphor-icons/regular/style.css" />
-<link rel="stylesheet" type="text/css" href="/cdn-assets/icons/@phosphor-icons/thin/style.css" />
-<link rel="stylesheet" type="text/css" href="/cdn-assets/icons/@phosphor-icons/light/style.css" />
-<link rel="stylesheet" type="text/css" href="/cdn-assets/icons/@phosphor-icons/bold/style.css" />
-<link rel="stylesheet" type="text/css" href="/cdn-assets/icons/@phosphor-icons/fill/style.css" />
-<link rel="stylesheet" type="text/css" href="/cdn-assets/icons/@phosphor-icons/duotone/style.css" />
-```
-
-- ❌ Do NOT add `@import url(...)` for Phosphor in any CSS file
-- ❌ `@phosphor-icons/react` must NOT be in `package.json`
-- ✅ Icons are available globally — no per-component setup needed
+# Icon Skill (React / TypeScript)
 
 ---
 
-## Proxy Configuration for CDN Assets
+## Setup (already done in this project — do not touch)
 
-Because the boilerplate uses the `/cdn-assets` path, the application requires a reverse proxy to correctly route these requests to the external CDN (`https://assets.ebdeskfusion.ai`) in both development and production environments.
-
-### 1. Vite Config (`vite.config.ts` for Development)
-Ensure the proxy rewrite is configured to strip the `/cdn-assets` prefix:
-
-```typescript
-export default defineConfig({
-  server: {
-    proxy: {
-      '/cdn-assets': {
-        target: 'https://assets.ebdeskfusion.ai',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/cdn-assets/, '')
-      }
-    }
-  }
-});
-```
-
-### 2. Next.js Config (`next.config.mjs` or `next.config.js`)
-If you are using Next.js, use the `rewrites` function to map incoming `/cdn-assets/...` requests to the external CDN URL:
-
-```javascript
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: '/cdn-assets/:path*',
-        destination: 'https://assets.ebdeskfusion.ai/:path*',
-      },
-    ];
-  },
-};
-
-export default nextConfig;
-```
-
-### 3. Rspack Config (`rspack.dev.ts` for Development)
-If the project uses Rspack instead of Vite, configure the dev server proxy with the same rewrite:
+Phosphor CSS is **bundled locally** from the `@phosphor-icons/web` npm package.
+The five weights `renderIcon()` supports are imported once in `src/main.tsx`:
 
 ```ts
-// rspack.dev.ts — development proxy
-proxy: {
-  '/cdn-assets': {
-    target: 'https://assets.ebdeskfusion.ai',
-    changeOrigin: true,
-    rewrite: (path) => path.replace(/^\/cdn-assets/, ''),
-  },
-}
+// src/main.tsx
+import '@phosphor-icons/web/regular'
+import '@phosphor-icons/web/fill'
+import '@phosphor-icons/web/bold'
+import '@phosphor-icons/web/light'
+import '@phosphor-icons/web/duotone'
 ```
 
-### 4. Nginx Config (`nginx.conf` for Production)
-Ensure the location block includes a trailing slash on the `proxy_pass` to handle the URL rewrite automatically:
-
-```nginx
-location /cdn-assets/ {
-    proxy_pass https://assets.ebdeskfusion.ai/;
-    proxy_ssl_server_name on;
-    proxy_set_header Host assets.ebdeskfusion.ai;
-}
-```
+- ✅ Icons are available globally — no per-component setup needed
+- ✅ Works offline and off any corporate network (important: this is a PWA)
+- ❌ Do NOT add `<link href="/cdn-assets/...">` tags or a `/cdn-assets` proxy —
+  that was the old external-CDN mechanism and has been removed from this project
+- ❌ Do NOT add `@phosphor-icons/react` to `package.json` — CSS classes only
+- ❌ Do NOT import the unused `thin` weight (`renderIcon()` doesn't support it)
 
 ---
 

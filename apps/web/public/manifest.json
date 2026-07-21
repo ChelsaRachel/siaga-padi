@@ -1,6 +1,8 @@
 {
-  "short_name": "App React",
-  "name": "App React",
+  "short_name": "Siaga Padi",
+  "name": "Siaga Padi — Peringatan Dini Hama & Penyakit Padi",
+  "description": "Peringatan dini dan rekomendasi penanganan hama & penyakit padi untuk petani dan penyuluh.",
+  "lang": "id",
   "icons": [
     {
       "src": "favicon.ico",
@@ -36,6 +38,6 @@
   ],
   "start_url": "/?standalone=true",
   "display": "standalone",
-  "theme_color": "#FF7900",
-  "background_color": "#ffffff"
+  "theme_color": "#1F6F4A",
+  "background_color": "#EDF5F0"
 }
