@@ -39,5 +39,5 @@ so it maps back to git.
 
 ### Security
 
-- (`52a2005`) `chore: add gitignore and ignore internal-only tooling` — keeps
-  private tooling and secrets out of the repository.
+- (`52a2005`) Added the root gitignore and excluded private internal tooling —
+  keeps that tooling and any secrets out of the repository.
