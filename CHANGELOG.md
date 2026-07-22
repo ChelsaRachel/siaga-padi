@@ -16,6 +16,9 @@ so it maps back to git.
   layer at `apps/backend/`, moving the project to MVP stage. JWT bearer auth,
   user/group/permission/organization CRUD, and the `/agent-mgmt/*` router,
   wired to a local self-hosted Supabase.
+- (`e6aede2`) `test(web): add Vitest infrastructure and PWA service/store test coverage` —
+  Vitest config and setup plus tests for the API, offline-draft-storage and PWA
+  services, and the PWA store.
 - (`4ad8146`) `feat(web): add offline PWA support with Workbox service worker` —
   offline app shell and service worker registration.
 - (`8ee160a`) `feat(design): apply Tani Ramah palette and resolve theme conflict` —
@@ -26,6 +29,8 @@ so it maps back to git.
   under `apps/web/`.
 - (`e40d8aa`) `chore: add project scaffolding directories`.
 - (`4641926`) `docs: add CONTRIBUTING guide + GitHub-adapted git-flow`.
+- (`4f84d39`) `docs: add draft FRD for MVP, mobile android, and web PWA` — the
+  functional baseline the build works against.
 
 ### Changed
 
