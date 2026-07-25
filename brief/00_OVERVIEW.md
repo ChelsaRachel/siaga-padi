@@ -74,7 +74,6 @@ Alur inti antar modul: `01 (kasus) → 02 (foto) → 03 (triase & rekomendasi) �
 
 | Asumsi | Dampak Kalau Salah |
 |--------|---------------------|
-| Dekomposisi 9 modul adalah pengelompokan 14 FR oleh agent (belum divalidasi Chelsa/domain reviewer) | Batas modul bisa bergeser saat sprint planning — mapping FR per file memudahkan re-grouping |
 | Section "Stack Agent Modul" di-skip di semua modul: pipeline sistem deterministik, tanpa agent workforce (sesuai arahan keep-it-lean) | Jika kebutuhan agent muncul, brief modul terkait perlu revisi + `agent-builder` dilibatkan |
 | Nama komponen visual & alur langkah diturunkan dari UI/UX requirements FRD; layout final milik `design/web/fusion/DESIGN.md` | Konflik desain diselesaikan dengan DESIGN.md sebagai otoritas visual |
 | Standar layanan ditulis deskriptif (cepat/sedang/toleran); angka NFR persis tetap di FRD §2.5 & §15 sebagai kontrak | Tim downstream wajib cek angka FRD, bukan hanya brief |
