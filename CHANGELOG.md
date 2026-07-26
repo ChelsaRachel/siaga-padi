@@ -12,6 +12,13 @@ so it maps back to git.
 
 ### Added
 
+- (`9ff4c2b`) `feat(backend): add be-python FastAPI scaffold` — backend service
+  layer at `apps/backend/`, moving the project to MVP stage. JWT bearer auth,
+  user/group/permission/organization CRUD, and the `/agent-mgmt/*` router,
+  wired to a local self-hosted Supabase.
+- (`e6aede2`) `test(web): add Vitest infrastructure and PWA service/store test coverage` —
+  Vitest config and setup plus tests for the API, offline-draft-storage and PWA
+  services, and the PWA store.
 - (`4ad8146`) `feat(web): add offline PWA support with Workbox service worker` —
   offline app shell and service worker registration.
 - (`8ee160a`) `feat(design): apply Tani Ramah palette and resolve theme conflict` —
@@ -22,6 +29,8 @@ so it maps back to git.
   under `apps/web/`.
 - (`e40d8aa`) `chore: add project scaffolding directories`.
 - (`4641926`) `docs: add CONTRIBUTING guide + GitHub-adapted git-flow`.
+- (`4f84d39`) `docs: add draft FRD for MVP, mobile android, and web PWA` — the
+  functional baseline the build works against.
 
 ### Changed
 
@@ -33,11 +42,19 @@ so it maps back to git.
 
 ### Fixed
 
+- (`9ff4c2b`) Backend dependencies could not resolve or boot as shipped —
+  repinned `httpx` 0.28.1 to 0.27.2 (`supabase` 2.10.0 requires <0.28) and added
+  the missing `dnspython` and `email-validator`, imported at runtime by
+  `dto/auth.py` and pydantic `EmailStr`.
 - (`4a8b5f4`) `fix(web): remove external-network deps and patch vulnerable packages` —
   dropped dependencies that only resolved on a private network and patched
   `axios`, `dompurify`, and `react-router-dom`.
 
 ### Security
 
+- (`9ff4c2b`) Removed a dead commented block in `service/external_auth.py` that
+  carried unrelated third-party PII and token-shaped strings, and excluded
+  `/.supabase/` from git — the local stack holds live secrets and the Postgres
+  datadir.
 - (`52a2005`) Added the root gitignore and excluded private internal tooling —
   keeps that tooling and any secrets out of the repository.
