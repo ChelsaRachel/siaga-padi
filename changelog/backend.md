@@ -6,6 +6,24 @@ Append-only. Newest entries at the top. Updated whenever a backend task is creat
 
 ---
 
+### 2026-07-26 · [Sprint 01 — auth-roles](../sprint/active/01-auth-roles/sprint.md) · Task: [00 — Schema Auth](../sprint/active/01-auth-roles/backend/00-schema-auth.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/supabase/migrations/0009_siaga_auth.sql`, `apps/backend/models/siaga_profile.py`, `apps/backend/dto/siaga_profile.py`, `apps/backend/scripts/seed_siaga_pilot.py`
+> Migration 0009 diterapkan di stack Supabase lokal (4 tabel + RLS); verifikasi dua-user via psql: petani hanya baris sendiri, penyuluh hanya kecamatan binaan (Ciparay, Baleendah) — tidak ada kebocoran lintas peran. 5 akun pilot sintetis di-seed. Ini menutup satu-satunya task yang tersisa di Sprint 01.
+
+### 2026-07-26 · [Sprint 01 — auth-roles](../sprint/active/01-auth-roles/sprint.md) · Task: [02 — Assisted Mode Routes](../sprint/active/01-auth-roles/backend/02-assisted-mode-routes.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/router/assisted.py`, `apps/backend/service/assisted.py`, `apps/backend/dto/assisted.py`, `apps/backend/tests/test_assisted.py`
+> Search petani terbatas binaan (tidak pernah global), start/end sesi dengan consent method tercatat (baris `assisted_sessions` = audit stamp), 403 di luar scope; teruji unit via fake repo.
+
+### 2026-07-26 · [Sprint 01 — auth-roles](../sprint/active/01-auth-roles/sprint.md) · Task: [01 — Auth Routes](../sprint/active/01-auth-roles/backend/01-auth-routes.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/router/siaga_auth.py`, `apps/backend/service/siaga_auth.py`, `apps/backend/dto/siaga_auth.py`, `apps/backend/dto/siaga_profile.py`, `apps/backend/models/siaga_profile.py`, `apps/backend/middleware/role_guard.py`, `apps/backend/util/siaga_response.py`, `apps/backend/exceptions/siaga_exceptions.py`, `apps/backend/api.py`, `apps/backend/config/base.py`, `apps/backend/auth/auth_bearer.py`, `apps/backend/auth/auth_handler.py`, `apps/backend/tests/`
+> Login + lockout 5x/15 menit (423 + retryAfter, body 401 identik anti-enumerasi), refresh, `/me` camelCase, role guard berbasis DB. 40 unit test hijau (coverage 83–89% modul baru). Hardening hasil security review: backdoor token boilerplate dihapus, invalid token 403→401, guard error ber-envelope top-level, RateLimitMiddleware terdaftar (RATE_LIMIT=300/60s), secret OTP/change-token pindah ke settings.
+
 ### 2026-07-25 · [Sprint 10 — dataset-feedback](../sprint/backlog/10-dataset-feedback/sprint.md) · Task: [01 — Dataset Pipeline & Curation Routes](../sprint/backlog/10-dataset-feedback/backend/01-dataset-pipeline-routes.md) · 📋 Added
 
 **Event:** Task created

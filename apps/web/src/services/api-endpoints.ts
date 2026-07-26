@@ -13,6 +13,17 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: `${SUFFIX_BASE}/auth/forgot-password`,
     RESET_PASSWORD: `${SUFFIX_BASE}/auth/reset-password`,
   },
+  // Siaga Padi Sprint 01 contract — docs/api-spec.md
+  SIAGA_AUTH: {
+    LOGIN: `${SUFFIX_BASE}/siaga/auth/login`,
+    REFRESH: `${SUFFIX_BASE}/siaga/auth/refresh`,
+    ME: `${SUFFIX_BASE}/siaga/auth/me`,
+  },
+  ASSISTED: {
+    SEARCH: `${SUFFIX_BASE}/assisted/search`,
+    START: `${SUFFIX_BASE}/assisted/start`,
+    END: `${SUFFIX_BASE}/assisted/end`,
+  },
   USER: {
     BASE: `${SUFFIX_BASE}/users`,
     PROFILE: `${SUFFIX_BASE}/users/profile`,

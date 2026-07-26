@@ -21,6 +21,9 @@ ROUTER_MODULES = {
     "permission": "permission",
     "user": "user",
     "agent": "agent",
+    # Siaga Padi Sprint 01 (Auth & Roles): /siaga/auth/* and /assisted/*.
+    "siaga_auth": "siaga_auth",
+    "assisted": "assisted",
     # Mandatory: agent_mgmt is the agent management plane that every Argus app needs.
     # Cannot be disabled via --routers / ENABLED_ROUTERS — be-python is the service
     # layer for the workforce of agents.
@@ -100,6 +103,17 @@ app.add_middleware(
 app.add_middleware(
     CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
 )
+
+# Per-IP request throttle (Redis-backed). Limits come from settings.RATE_LIMIT /
+# settings.RATE_LIMIT_WINDOW — required in front of /siaga/auth/login, which
+# otherwise only has the per-email lockout.
+app.add_middleware(RateLimitMiddleware)
+
+# SiagaError raised in routers OR dependencies (role guard) renders as the
+# contract's top-level failure envelope.
+from util.siaga_response import register_siaga_exception_handlers
+
+register_siaga_exception_handlers(app)
 
 
 def _pool_threads(prefix="syncpool"):

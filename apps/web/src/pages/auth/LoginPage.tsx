@@ -1,100 +1,65 @@
-import { Button } from '@/components/ui/button'
-import { PaginationControl } from '@/components/ui/pagination-control'
-import { useState } from 'react'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { LoginForm } from '@/features/shared/auth'
+import { selectIsAuthenticated, useAuthStore } from '@/stores/useAuthStore'
 
-const TOTAL_DATA = 200
-const PAGE_SIZE = 5
+interface LocationState {
+  from?: {
+    pathname?: string
+    search?: string
+  }
+}
+
+/** Resolve the deep-link destination stored by AuthGuard (default: role home). */
+function resolveRedirectPath(state: unknown): string {
+  const from = (state as LocationState | null)?.from
+  // Internal single-slash paths only: '//evil.com' is protocol-relative and
+  // would navigate cross-origin.
+  if (!from?.pathname || !from.pathname.startsWith('/') || from.pathname.startsWith('//')) {
+    return '/'
+  }
+  return `${from.pathname}${from.search ?? ''}`
+}
 
 function LoginPage() {
-  const [currentPage, setCurrentPage] = useState(0)
+  const isAuthenticated = useAuthStore(selectIsAuthenticated)
+  const location = useLocation()
+  const navigate = useNavigate()
+  const redirectPath = resolveRedirectPath(location.state)
 
-  const pageCount = Math.ceil(TOTAL_DATA / PAGE_SIZE)
+  if (isAuthenticated) {
+    return <Navigate to={redirectPath} replace />
+  }
 
   return (
-    <>
-      <div className="p-5">
-        <div className="flex gap-5 mb-5">
-          <Button size={'xs'}>Button CTA</Button>
-          <Button size={'sm'}>Button CTA</Button>
-          <Button size={'md'}>Button CTA</Button>
-          <Button size={'lg'}>Button CTA</Button>
+    <div className="flex min-h-svh flex-col items-center justify-center bg-background-secondary px-4 py-8">
+      <div className="w-full max-w-md">
+        <div className="mb-6 flex flex-col items-center gap-3 text-center">
+          <div className="flex size-16 items-center justify-center rounded-2xl bg-primary-base text-font-on-accent shadow-lg">
+            <i className="ph-fill ph-plant text-h3" aria-hidden="true" />
+          </div>
+          <div>
+            <h1 className="text-h4 font-bold text-font-primary">Siaga Padi</h1>
+            <p className="mt-1 text-body-md text-font-secondary">
+              Masuk untuk memeriksa kesehatan tanaman padi Anda
+            </p>
+          </div>
         </div>
-        <div className="flex gap-5 mb-5">
-          <Button size={'xs'} variant={'destructive'}>
-            Button CTA
-          </Button>
-          <Button size={'sm'} variant={'destructive'}>
-            Button CTA
-          </Button>
-          <Button size={'md'} variant={'destructive'}>
-            Button CTA
-          </Button>
-          <Button size={'lg'} variant={'destructive'}>
-            Button CTA
-          </Button>
-        </div>
-        <div className="flex gap-5 mb-5">
-          <Button size={'xs'} variant={'outline'}>
-            Button CTA
-          </Button>
-          <Button size={'sm'} variant={'outline'}>
-            Button CTA
-          </Button>
-          <Button size={'md'} variant={'outline'}>
-            Button CTA
-          </Button>
-          <Button size={'lg'} variant={'outline'}>
-            Button CTA
-          </Button>
-        </div>
-        <div className="flex gap-5 mb-5">
-          <Button size={'xs'} variant={'ghost'}>
-            Button CTA
-          </Button>
-          <Button size={'sm'} variant={'ghost'}>
-            Button CTA
-          </Button>
-          <Button size={'md'} variant={'ghost'}>
-            Button CTA
-          </Button>
-          <Button size={'lg'} variant={'ghost'}>
-            Button CTA
-          </Button>
-        </div>
-        <div className="flex gap-5 mb-5">
-          <Button size={'xs'} variant={'link'}>
-            Button CTA
-          </Button>
-          <Button size={'sm'} variant={'link'}>
-            Button CTA
-          </Button>
-          <Button size={'md'} variant={'link'}>
-            Button CTA
-          </Button>
-          <Button size={'lg'} variant={'link'}>
-            Button CTA
-          </Button>
-        </div>
-      </div>
 
-      <div className="p-5 flex justify-between items-center">
-        <p className="text-sm text-muted-foreground">
-          Halaman aktif: <span className="font-medium text-foreground">{currentPage + 1}</span> / {pageCount}
-          &nbsp;(total {TOTAL_DATA} data, {PAGE_SIZE} per halaman)
+        <Card className="rounded-2xl shadow-lg">
+          <CardHeader className="border-b-0 pb-0">
+            <h2 className="text-h6 font-semibold text-font-primary">Masuk</h2>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <LoginForm onSuccess={() => navigate(redirectPath, { replace: true })} />
+          </CardContent>
+        </Card>
+
+        <p className="mt-6 text-center text-body-sm text-font-placeholder">
+          Butuh akun? Hubungi penyuluh di wilayah Anda.
         </p>
-        <div>
-          <PaginationControl
-            pageCount={pageCount}
-            forcePage={0}
-            pageRangeDisplayed={3}
-            marginPagesDisplayed={1}
-            showFirstLast
-            disableInitialCallback
-            onPageChange={(selected) => setCurrentPage(selected)}
-          />
-        </div>
       </div>
-    </>
+    </div>
   )
 }
 

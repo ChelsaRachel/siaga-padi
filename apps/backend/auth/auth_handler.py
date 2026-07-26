@@ -72,8 +72,13 @@ def remove_payload(token:str , keys:list)->str:
     token = jwt.encode(decoded_payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITH)
     return token
 
+# Per-process fallback seed: keeps OTPs unpredictable when OTP_TOTP_SEED is
+# unset (single-worker dev). Multi-worker deployments must set the env var.
+_RUNTIME_OTP_SEED = pyotp.random_base32()
+
+
 def create_otp() -> str:
-    totp = pyotp.TOTP("MZ2TKILPNZAXA4A=")
+    totp = pyotp.TOTP(settings.OTP_TOTP_SEED or _RUNTIME_OTP_SEED)
     return totp.now()
 
 def create_token() -> str:
@@ -97,7 +102,7 @@ def decode_token_change(token: str):
     try:
         decoded_token = jwt.decode(
             token,
-            "E80C2S29hU7oXcNdnM8clIGoQEKW0rSPoODGlMX3",
+            settings.JWT_CHANGE_SECRET or settings.JWT_SECRET,
             algorithms=[settings.JWT_ALGORITH],
         )
         return decoded_token

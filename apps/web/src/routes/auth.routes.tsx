@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { RouteObject } from 'react-router-dom'
+import { RouteFallback } from '@/components/common/RouteFallback'
 
 const LoginPage = React.lazy(() => import('@/pages/auth/LoginPage'))
 
@@ -9,7 +10,11 @@ const authRoutes: RouteObject[] = [
     children: [
       {
         path: 'login',
-        element: <LoginPage />,
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <LoginPage />
+          </Suspense>
+        ),
       },
       // You can add register, forgot-password, etc. here
     ],
