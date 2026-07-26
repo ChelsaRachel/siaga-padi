@@ -6,6 +6,150 @@ Append-only. Newest entries at the top. Updated whenever a backend task is creat
 
 ---
 
+### 2026-07-25 · [Sprint 10 — dataset-feedback](../sprint/backlog/10-dataset-feedback/sprint.md) · Task: [01 — Dataset Pipeline & Curation Routes](../sprint/backlog/10-dataset-feedback/backend/01-dataset-pipeline-routes.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/10-dataset-feedback/backend/01-dataset-pipeline-routes.md`
+> De-identifikasi batch, dedup, keputusan kurasi + adjudikasi, penarikan consent, pengunci manifes rilis.
+
+### 2026-07-25 · [Sprint 10 — dataset-feedback](../sprint/backlog/10-dataset-feedback/sprint.md) · Task: [00 — Schema Dataset](../sprint/backlog/10-dataset-feedback/backend/00-schema-dataset.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/10-dataset-feedback/backend/00-schema-dataset.md`
+> Foundation: kandidat dataset, rilis + manifes terkunci, kelompok samaran (migration 0016).
+
+### 2026-07-25 · [Sprint 09 — dashboard-map](../sprint/backlog/09-dashboard-map/sprint.md) · Task: [01 — Dashboard Aggregates, Masking, Export](../sprint/backlog/09-dashboard-map/backend/01-dashboard-aggregates.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/09-dashboard-map/backend/01-dashboard-aggregates.md`
+> KPI cache ≤15 menit, daftar prioritas, agregat area tersamar, ekspor tautan 24 jam.
+
+### 2026-07-25 · [Sprint 08 — admin-config](../sprint/backlog/08-admin-config/sprint.md) · Task: [01 — Config Routes + Provider Health/Budget](../sprint/backlog/08-admin-config/backend/01-config-routes-health.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/08-admin-config/backend/01-config-routes-health.md`
+> Draf→setujui(orang kedua)→aktif→rollback + user admin + job kesehatan/pagu penyedia.
+
+### 2026-07-25 · [Sprint 08 — admin-config](../sprint/backlog/08-admin-config/sprint.md) · Task: [00 — Schema Config](../sprint/backlog/08-admin-config/backend/00-schema-config.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/08-admin-config/backend/00-schema-config.md`
+> Foundation: config_versions satu-aktif-per-lingkup, audit diff, provider health & budget (migration 0015).
+
+### 2026-07-25 · [Sprint 07 — offline-fallback](../sprint/backlog/07-offline-fallback/sprint.md) · Task: [03 — Backlog & Error Metrics](../sprint/backlog/07-offline-fallback/backend/03-backlog-metrics.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/07-offline-fallback/backend/03-backlog-metrics.md`
+> Agregat kesehatan sistem untuk panel admin (hijau/kuning/merah).
+
+### 2026-07-25 · [Sprint 07 — offline-fallback](../sprint/backlog/07-offline-fallback/sprint.md) · Task: [02 — Rule-based Fallback Renderer](../sprint/backlog/07-offline-fallback/backend/02-rule-fallback.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/07-offline-fallback/backend/02-rule-fallback.md`
+> Fallback templat aturan saat AI bahasa gagal; CV mati → simpan + review tanpa label; reprocess saat pulih.
+
+### 2026-07-25 · [Sprint 07 — offline-fallback](../sprint/backlog/07-offline-fallback/sprint.md) · Task: [01 — Sync Idempotency + Conflict Contract](../sprint/backlog/07-offline-fallback/backend/01-sync-idempotency.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/07-offline-fallback/backend/01-sync-idempotency.md`
+> Idempotensi semua endpoint antrean sinkron + respons konflik 409 terstruktur.
+
+### 2026-07-25 · [Sprint 06 — review-penyuluh](../sprint/backlog/06-review-penyuluh/sprint.md) · Task: [01 — Review Routes](../sprint/backlog/06-review-penyuluh/backend/01-review-routes.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/06-review-penyuluh/backend/01-review-routes.md`
+> Antrean prioritas keselamatan, keputusan beralasan, revisi, eskalasi POPT, tindak lanjut, nominasi dataset.
+
+### 2026-07-25 · [Sprint 06 — review-penyuluh](../sprint/backlog/06-review-penyuluh/sprint.md) · Task: [00 — Schema Review](../sprint/backlog/06-review-penyuluh/backend/00-schema-review.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/06-review-penyuluh/backend/00-schema-review.md`
+> Foundation: review berversi (AI beku), follow-ups, eskalasi, flag nominasi (migration 0014).
+
+### 2026-07-25 · [Sprint 05 — ai-triage](../sprint/backlog/05-ai-triage/sprint.md) · Task: [03 — Recommendation Engine + Safety Checker](../sprint/backlog/05-ai-triage/backend/03-recommendation-engine.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/05-ai-triage/backend/03-recommendation-engine.md`
+> Rekomendasi berbasis rujukan KB, satu panggilan LLM terbatas tanpa PII, pemeriksa keamanan nol dosis/merek.
+
+### 2026-07-25 · [Sprint 05 — ai-triage](../sprint/backlog/05-ai-triage/sprint.md) · Task: [02 — Questionnaire Engine](../sprint/backlog/05-ai-triage/backend/02-questionnaire-engine.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/05-ai-triage/backend/02-questionnaire-engine.md`
+> Pemilih ≤5 pertanyaan dari bank tervalidasi + aturan urgensi (tanpa mengubah label).
+
+### 2026-07-25 · [Sprint 05 — ai-triage](../sprint/backlog/05-ai-triage/sprint.md) · Task: [01 — CV Inference Integration](../sprint/backlog/05-ai-triage/backend/01-cv-inference.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/05-ai-triage/backend/01-cv-inference.md`
+> Inferensi 4 kelas terkalibrasi, abstain/konflik, penalti kualitas; stub sampai endpoint model Chelsa siap.
+
+### 2026-07-25 · [Sprint 05 — ai-triage](../sprint/backlog/05-ai-triage/sprint.md) · Task: [00 — Schema Triage](../sprint/backlog/05-ai-triage/backend/00-schema-triage.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/05-ai-triage/backend/00-schema-triage.md`
+> Foundation: analysis_results beku, question_bank berversi, recommendations dua-tampilan (migration 0013).
+
+### 2026-07-25 · [Sprint 04 — knowledge-base](../sprint/backlog/04-knowledge-base/sprint.md) · Task: [02 — KB Governance Routes](../sprint/backlog/04-knowledge-base/backend/02-kb-governance-routes.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/04-knowledge-base/backend/02-kb-governance-routes.md`
+> CRUD sumber + lisensi, setujui/tolak potongan beralasan, penanda kebijakan wajib, diff, pensiun.
+
+### 2026-07-25 · [Sprint 04 — knowledge-base](../sprint/backlog/04-knowledge-base/sprint.md) · Task: [01 — KB Ingest + Retrieval](../sprint/backlog/04-knowledge-base/backend/01-kb-ingest-retrieval.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/04-knowledge-base/backend/01-kb-ingest-retrieval.md`
+> Ekstraksi + pemecahan dokumen, indeks hanya-disetujui, endpoint uji pengambilan.
+
+### 2026-07-25 · [Sprint 04 — knowledge-base](../sprint/backlog/04-knowledge-base/sprint.md) · Task: [00 — Schema KB](../sprint/backlog/04-knowledge-base/backend/00-schema-kb.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/04-knowledge-base/backend/00-schema-kb.md`
+> Foundation: kb_sources + kb_chunks berversi, penanda stabil RUJ-*, status persetujuan (migration 0012).
+
+### 2026-07-25 · [Sprint 03 — photo-quality](../sprint/backlog/03-photo-quality/sprint.md) · Task: [01 — Upload + Quality Gate](../sprint/backlog/03-photo-quality/backend/01-upload-quality-gate.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/03-photo-quality/backend/01-upload-quality-gate.md`
+> Strip EXIF, normalisasi, dedup fingerprint, gerbang kualitas alasan sederhana, jalur 3× gagal.
+
+### 2026-07-25 · [Sprint 03 — photo-quality](../sprint/backlog/03-photo-quality/sprint.md) · Task: [00 — Schema Photos](../sprint/backlog/03-photo-quality/backend/00-schema-photos.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/03-photo-quality/backend/00-schema-photos.md`
+> Foundation: case_photos + bucket storage + kebijakan akses signed URL (migration 0011).
+
+### 2026-07-25 · [Sprint 02 — case-management](../sprint/backlog/02-case-management/sprint.md) · Task: [01 — Case Routes](../sprint/backlog/02-case-management/backend/01-case-routes.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/02-case-management/backend/01-case-routes.md`
+> Create idempoten, daftar/detail/linimasa, profil + lahan CRUD, permintaan penghapusan data.
+
+### 2026-07-25 · [Sprint 02 — case-management](../sprint/backlog/02-case-management/sprint.md) · Task: [00 — Schema Case](../sprint/backlog/02-case-management/backend/00-schema-case.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/02-case-management/backend/00-schema-case.md`
+> Foundation: fields/cases/case_events + state machine FRD §6.5–6.6 + kunci anti-duplikat (migration 0010).
+
+### 2026-07-25 · [Sprint 01 — auth-roles](../sprint/backlog/01-auth-roles/sprint.md) · Task: [02 — Assisted Mode Routes](../sprint/backlog/01-auth-roles/backend/02-assisted-mode-routes.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/01-auth-roles/backend/02-assisted-mode-routes.md`
+> Cari petani binaan, profil minimal "didampingi", sesi pendampingan berjejak consent.
+
+### 2026-07-25 · [Sprint 01 — auth-roles](../sprint/backlog/01-auth-roles/sprint.md) · Task: [01 — Auth Routes](../sprint/backlog/01-auth-roles/backend/01-auth-routes.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/01-auth-roles/backend/01-auth-routes.md`
+> Login via Supabase JWT, lockout 5×/15 menit, /me role+assignment, role guard.
+
+### 2026-07-25 · [Sprint 01 — auth-roles](../sprint/backlog/01-auth-roles/sprint.md) · Task: [00 — Schema Auth](../sprint/backlog/01-auth-roles/backend/00-schema-auth.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `sprint/backlog/01-auth-roles/backend/00-schema-auth.md`
+> Foundation: siaga_profiles 4 role, assignments, assisted_sessions, lockout + RLS (migration 0009).
+
 <!-- ENTRY FORMAT:
 ### YYYY-MM-DD · [Sprint NN — slug](../sprint/active/NN-slug/sprint.md) · Task: [task title](../sprint/.../backend/NN-task.md) · STATUS
 
