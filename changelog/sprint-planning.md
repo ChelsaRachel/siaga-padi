@@ -6,6 +6,18 @@ Append-only. Newest entries at the top. Updated whenever sprint status changes i
 
 ---
 
+### 2026-07-26 · Sprint 01 — auth-roles · ARCHIVED
+
+**Event:** Archived
+**Sprint:** [01-auth-roles](../sprint/archive/01-auth-roles/sprint.md)
+> Semua 6 task selesai. Migrasi 0009 diterapkan + RLS diverifikasi dua-user di stack Supabase lokal; E2E smoke (4 role, lockout, mode pendampingan) lulus di browser nyata. Dipindah dari `active/` ke `archive/`.
+
+### 2026-07-26 · Sprint 01 — auth-roles · PROMOTED
+
+**Event:** Promoted to active
+**Sprint:** [01-auth-roles](../sprint/active/01-auth-roles/sprint.md)
+> Sprint pertama dimulai: login + 4 peran + beranda per peran + mode pendampingan berjejak. Foundation task: `backend/00-schema-auth.md`.
+
 ### 2026-07-25 · Sprint 10 — dataset-feedback · CREATED
 
 **Event:** Sprint created

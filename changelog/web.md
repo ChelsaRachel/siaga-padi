@@ -6,6 +6,24 @@ Append-only. Newest entries at the top. Updated whenever a frontend task is crea
 
 ---
 
+### 2026-07-26 · [Sprint 01 — auth-roles](../sprint/active/01-auth-roles/sprint.md) · Task: [03 — Assisted Mode UI](../sprint/active/01-auth-roles/frontend/03-assisted-mode-ui.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/features/penyuluh/assisted/`, `apps/web/src/stores/useAssistedStore.ts`, `apps/web/src/services/assisted.service.ts`, `apps/web/src/pages/dampingi-petani/DampingiPetaniPage.tsx`
+> Modal cari petani binaan + form profil minimal (consent lisan/tertulis/in-app, tanpa NIK), banner persisten "atas nama" di shell dengan tombol keluar; state di store untuk sprint berikutnya. Catatan: bucket domain `features/penyuluh/` (bukan `features/admin/`) sesuai skill reactjs-features.
+
+### 2026-07-26 · [Sprint 01 — auth-roles](../sprint/active/01-auth-roles/sprint.md) · Task: [02 — Role-based Home & App Shell](../sprint/active/01-auth-roles/frontend/02-role-home-shell.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/components/layouts/`, `apps/web/src/config/menu/siaga.menu.ts`, `apps/web/src/config/siaga-roles.ts`, `apps/web/src/pages/home/`, `apps/web/src/routes/`
+> Shell non-overlap (header + sidebar desktop + bottom-nav mobile), menu config-driven 4 peran via `menuForRole`, beranda role-switched dengan tile placeholder, RoleGuard redirect ke beranda sendiri; header menampilkan nama + peran + wilayah binaan.
+
+### 2026-07-26 · [Sprint 01 — auth-roles](../sprint/active/01-auth-roles/sprint.md) · Task: [01 — Login Page & Session Handling](../sprint/active/01-auth-roles/frontend/01-login-page.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/pages/auth/LoginPage.tsx`, `apps/web/src/features/shared/auth/`, `apps/web/src/services/siaga-auth.service.ts`, `apps/web/src/services/api-client.ts`, `apps/web/src/stores/useAuthStore.ts`, `apps/web/src/routes/guards/`, `apps/web/env/`, `apps/web/docs/api-spec.md`
+> Login RHF+Yup mobile-first, pesan 401 generik + 423 dengan waktu retry, Bearer token dari store, refresh queue anti-storm, deep-link redirect tersanitasi, modal sesi-berakhir yang mempertahankan draf (persisted `isSessionExpired`). 112 vitest hijau, tsc + build prod lulus.
+
 ### 2026-07-25 · [Sprint 10 — dataset-feedback](../sprint/backlog/10-dataset-feedback/sprint.md) · Task: [02 — Pembangun Rilis Dataset](../sprint/backlog/10-dataset-feedback/frontend/02-release-builder.md) · 📋 Added
 
 **Event:** Task created

@@ -6,7 +6,7 @@ Master tracking table for every sprint in this project. Update on every status c
 
 | Sprint | Goal | Status | Depends On | Brief | References | Created At | Started At | Completed At |
 |---|---|---|---|---|---|---|---|---|
-| Sprint 01 — Auth & Roles | Login, 4 roles, beranda per peran, mode pendampingan berjejak | 📋 Planned | - | [../brief/08_ADMINISTRASI_SISTEM.md](../brief/08_ADMINISTRASI_SISTEM.md) | [./backlog/01-auth-roles/](./backlog/01-auth-roles/) | 2026-07-25 | - | - |
+| Sprint 01 — Auth & Roles | Login, 4 roles, beranda per peran, mode pendampingan berjejak | ✅ Done | - | [../brief/08_ADMINISTRASI_SISTEM.md](../brief/08_ADMINISTRASI_SISTEM.md) | [./archive/01-auth-roles/](./archive/01-auth-roles/) | 2026-07-25 | 2026-07-26 | 2026-07-26 |
 | Sprint 02 — Case Management | Wizard kasus 3 langkah, profil petani/lahan, riwayat & linimasa | 📋 Planned | 01 | [../brief/01_MANAJEMEN_KASUS_PETANI.md](../brief/01_MANAJEMEN_KASUS_PETANI.md) | [./backlog/02-case-management/](./backlog/02-case-management/) | 2026-07-25 | - | - |
 | Sprint 03 — Photo & Quality | Kamera terpandu, unggah dengan progres, gerbang kualitas + retake | 📋 Planned | 02 | [../brief/02_PENGAMBILAN_FOTO_KUALITAS.md](../brief/02_PENGAMBILAN_FOTO_KUALITAS.md) | [./backlog/03-photo-quality/](./backlog/03-photo-quality/) | 2026-07-25 | - | - |
 | Sprint 04 — Knowledge Base | Katalog sumber, persetujuan potongan rujukan, uji pengambilan | 📋 Planned | 01 | [../brief/06_TATA_KELOLA_PENGETAHUAN.md](../brief/06_TATA_KELOLA_PENGETAHUAN.md) | [./backlog/04-knowledge-base/](./backlog/04-knowledge-base/) | 2026-07-25 | - | - |
