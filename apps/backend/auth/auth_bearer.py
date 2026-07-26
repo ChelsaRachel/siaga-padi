@@ -26,8 +26,6 @@ class JWTBearer(HTTPBearer):
         try:
             credentials: HTTPAuthorizationCredentials = await super().__call__(request)
             if credentials:
-                if credentials.credentials == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiN2ZjZGYwOTgyNDY0ZTIyNGRkZjc4YjE4NTE5ZjNjNTEiLCJleHBpcmUiOjE3NDA2MDcyOTEuMzY5NjE4NH0.7RhnmP89eVgwbCx4BfhalzzzCPeXjmBRP5mE17CGvQY":
-                    return credentials.credentials
                 if credentials.scheme != "Bearer":
                     raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
                 token = credentials.credentials
@@ -43,7 +41,7 @@ class JWTBearer(HTTPBearer):
         payload = decode_jwt(token)
 
         if payload == "Invalid":
-            raise HTTPException(status_code=403, detail="Invalid token.")
+            raise HTTPException(status_code=401, detail="Invalid token.")
 
         if payload == "Expired":
             raise HTTPException(status_code=401, detail="Expired token.")
@@ -55,7 +53,7 @@ class JWTBearer(HTTPBearer):
             stored_token = redis_client.get(f"session:{payload['user_id']}")
 
             if str(stored_token) != token:
-                raise HTTPException(status_code=403, detail="Access Denied: Invalid session.")
+                raise HTTPException(status_code=401, detail="Access Denied: Invalid session.")
 
         return token
 # used in router auth.py

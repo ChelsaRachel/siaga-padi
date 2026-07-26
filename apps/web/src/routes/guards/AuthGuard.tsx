@@ -1,13 +1,21 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { selectIsAuthenticated, useAuthStore } from '@/stores/useAuthStore';
 
 interface AuthGuardProps {
   children: React.ReactNode;
 }
 
+/**
+ * Redirects unauthenticated visitors to the login page while preserving the
+ * intended destination (deep-link redirect): after a successful login the
+ * user lands back on `location.state.from`.
+ *
+ * Note: an expired session (`isSessionExpired`) keeps `isAuthenticated` true —
+ * the shell shows a draft-preserving re-login modal instead of redirecting.
+ */
 const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
-  // TODO: Implement actual authentication check (e.g., from zustand store or localStorage)
-  const isAuthenticated = !!localStorage.getItem('me');
+  const isAuthenticated = useAuthStore(selectIsAuthenticated);
   const location = useLocation();
 
   if (!isAuthenticated) {

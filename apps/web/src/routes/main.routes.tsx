@@ -1,34 +1,100 @@
 import { lazy, Suspense } from 'react'
-import { RouteObject } from 'react-router-dom'
+import { Navigate, RouteObject } from 'react-router-dom'
 import AppLayout from '@/components/layouts/AppLayout'
-import BlankLayout from '@/components/layouts/BlankLayout'
-import TopLayout from '@/components/layouts/TopLayout'
+import { RouteFallback } from '@/components/common/RouteFallback'
+import ComingSoonPage from '@/pages/coming-soon/ComingSoonPage'
+import adminRoutes from './admin.routes'
+import AuthGuard from './guards/AuthGuard'
+import RoleGuard from './guards/RoleGuard'
 
-const Dashboard = lazy(() => import('@/pages/dashboard/DashboardPage'))
+const HomePage = lazy(() => import('@/pages/home/HomePage'))
+const DampingiPetaniPage = lazy(() => import('@/pages/dampingi-petani/DampingiPetaniPage'))
 
-
+/**
+ * Protected app routes — everything renders inside the AppLayout shell.
+ * Role-owned paths are wrapped in RoleGuard: wrong-role navigation
+ * redirects to the visitor's own home (`/`), never an error page.
+ * Future-sprint paths render ComingSoonPage as routes-to-be.
+ */
 const mainRoutes: RouteObject[] = [
   {
     path: '/',
+    element: (
+      <AuthGuard>
+        <AppLayout />
+      </AuthGuard>
+    ),
     children: [
       {
-        element: <BlankLayout />,
-        children: [],
+        index: true,
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <HomePage />
+          </Suspense>
+        ),
+      },
+
+      // Petani (Sprint 02+)
+      {
+        path: 'periksa-tanaman',
+        element: (
+          <RoleGuard allowedRoles={['petani']}>
+            <ComingSoonPage title="Periksa Tanaman" icon="camera" sprintLabel="Sprint 02" />
+          </RoleGuard>
+        ),
       },
       {
-        element: <AppLayout />,
-        children: [
-          { index: true, element: <Suspense><Dashboard /></Suspense> },
-          { path: '/path', element: <Suspense><>Component here</></Suspense> },
-          
-        ],
+        path: 'riwayat',
+        element: (
+          <RoleGuard allowedRoles={['petani']}>
+            <ComingSoonPage title="Riwayat" icon="clock-counter-clockwise" sprintLabel="Sprint 02" />
+          </RoleGuard>
+        ),
+      },
+
+      // Penyuluh
+      {
+        path: 'antrean-review',
+        element: (
+          <RoleGuard allowedRoles={['penyuluh']}>
+            <ComingSoonPage title="Antrean Review" icon="list-checks" sprintLabel="Sprint 02" />
+          </RoleGuard>
+        ),
       },
       {
-        element: <TopLayout />,
-        children: [
-          { path: '/path-2', element: <Suspense><>Component here</></Suspense> },
-        ],
+        path: 'dampingi-petani',
+        element: (
+          <RoleGuard allowedRoles={['penyuluh']}>
+            <Suspense fallback={<RouteFallback />}>
+              <DampingiPetaniPage />
+            </Suspense>
+          </RoleGuard>
+        ),
       },
+      {
+        path: 'riwayat-wilayah',
+        element: (
+          <RoleGuard allowedRoles={['penyuluh']}>
+            <ComingSoonPage title="Riwayat Wilayah" icon="map-trifold" sprintLabel="Sprint 02" />
+          </RoleGuard>
+        ),
+      },
+
+      // Domain reviewer
+      {
+        path: 'pengetahuan',
+        element: (
+          <RoleGuard allowedRoles={['domain_reviewer']}>
+            <ComingSoonPage title="Pengetahuan" icon="books" sprintLabel="Sprint 02" />
+          </RoleGuard>
+        ),
+      },
+
+      // Admin branch (/administrator/*)
+      ...adminRoutes,
+
+      // Unknown protected paths land on the role home
+      { path: '*', element: <Navigate to="/" replace /> },
     ],
   },
 ]

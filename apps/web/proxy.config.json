@@ -1,8 +1,8 @@
 [
   {
     "context": "/api/v1/apps",
-    "target": "http://localhost:8000/",
-    "docs": "Placeholder — point at the Siaga Padi FastAPI backend once it exists (apps/backend). No backend is running yet; API calls will fail until then.",
+    "target": "http://localhost:8020/",
+    "docs": "Siaga Padi FastAPI backend (apps/backend, boilerplate default `python api.py` on :8020). Backend may not be running yet; API calls fail until it is.",
     "logLevel": "debug",
     "secure": false,
     "changeOrigin": true,

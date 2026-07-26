@@ -73,6 +73,11 @@ class BaseSetting(BaseSettings):
     JWT_EXPIRED: int
     JWT_REFRESH: int = Field(default=604800)
     JWT_ACTIVE: bool
+    # Verifies password/email change tokens. Empty → falls back to JWT_SECRET.
+    JWT_CHANGE_SECRET: str = Field(default="")
+    # Base32 TOTP seed for email OTP generation. Empty → random per process
+    # (set it in .env for multi-worker deployments so all workers agree).
+    OTP_TOTP_SEED: str = Field(default="")
 
     BASE_RESPONSE_CASE: str
 
@@ -95,6 +100,12 @@ class BaseSetting(BaseSettings):
     COPYRIGHT: str = Field(
         default="Copyright (c) 2023 eBdesk Teknologi. All Rights Reserved."
     )
+
+    # --- Siaga Padi (Sprint 01: Auth & Roles) table names ---
+    SUPABASE_TABLE_SIAGA_PROFILE: str = Field(default="siaga_profiles")
+    SUPABASE_TABLE_PENYULUH_ASSIGNMENT: str = Field(default="penyuluh_assignments")
+    SUPABASE_TABLE_ASSISTED_SESSION: str = Field(default="assisted_sessions")
+    SUPABASE_TABLE_LOGIN_LOCKOUT: str = Field(default="login_lockouts")
 
     # External Authentication Configuration
     LOGIN_METHOD: Optional[str] = Field(default=None)
