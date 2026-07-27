@@ -10,6 +10,7 @@ export { TagInput } from './TagInput'
 
 // Choice — single
 export { Radio } from './Radio'
+export { ChipGroup } from './ChipGroup'
 export { SelectAsync } from './SelectAsync'
 export { TreeSelect } from './TreeSelect'
 export type { TreeNode } from './TreeSelect'

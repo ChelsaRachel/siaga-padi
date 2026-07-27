@@ -50,6 +50,7 @@ src/modules/dynamic-filter/
 │   ├── TextDebounce.tsx        ← Text input with debounce
 │   ├── TagInput.tsx            ← Multi-tag input (Enter/comma)
 │   ├── Radio.tsx               ← RadioGroup single select
+│   ├── ChipGroup.tsx           ← Single-select chip row (touch-first)
 │   ├── SelectAsync.tsx         ← Select with async fetch
 │   ├── TreeSelect.tsx          ← Hierarchical tree select
 │   ├── Checkbox.tsx            ← Multi-select via checkboxes
@@ -78,6 +79,7 @@ src/modules/dynamic-filter/
 | `TextDebounce` | `filterKey` | `string` | Text debounce |
 | `TagInput` | `filterKey` | `string[]` | Multi-tag input |
 | `Radio` | `filterKey` | `string` | RadioGroup |
+| `ChipGroup` | `filterKey` | `string` | Single-select chip row (touch-first, clears via "all" chip) |
 | `SelectAsync` | `filterKey`, `fetchOptions` | `string` | Async select |
 | `TreeSelect` | `filterKey`, `nodes` | `string` | Tree select |
 | `Checkbox` | `filterKey` | `string[]` | Multi checkbox |

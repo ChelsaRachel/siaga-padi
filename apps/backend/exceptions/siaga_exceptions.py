@@ -79,3 +79,10 @@ class SiagaValidationError(SiagaError):
     """400 — semantically invalid request (e.g. subjectProfileId XOR newProfile)."""
 
     status_code = 400
+
+
+class SiagaNotFoundError(SiagaError):
+    """404 — missing OR not visible to the caller (identical body by design,
+    so resource existence never leaks — no-enumeration rule)."""
+
+    status_code = 404

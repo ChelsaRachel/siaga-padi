@@ -24,6 +24,19 @@ export const API_ENDPOINTS = {
     START: `${SUFFIX_BASE}/assisted/start`,
     END: `${SUFFIX_BASE}/assisted/end`,
   },
+  // Siaga Padi Sprint 02 contract — docs/api-spec-case.md
+  CASES: {
+    CREATE: `${SUFFIX_BASE}/cases`,
+    GET_ALL: `${SUFFIX_BASE}/cases/get-all`,
+    DETAIL: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}`,
+    TIMELINE: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/timeline`,
+  },
+  FARMER_PROFILE: {
+    UPDATE: `${SUFFIX_BASE}/farmer/profile`,
+    FIELDS: `${SUFFIX_BASE}/farmer/profile/fields`,
+    FIELDS_GET_ALL: `${SUFFIX_BASE}/farmer/profile/fields/get-all`,
+    DELETION_REQUEST: `${SUFFIX_BASE}/farmer/profile/deletion-request`,
+  },
   USER: {
     BASE: `${SUFFIX_BASE}/users`,
     PROFILE: `${SUFFIX_BASE}/users/profile`,
