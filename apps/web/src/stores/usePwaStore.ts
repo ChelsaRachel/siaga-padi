@@ -4,8 +4,10 @@ import {
   getQueueStatus,
   isSupported,
   retryQueue,
+  serveAuthTokenToWorker,
   subscribeToWorkerMessages,
 } from '@/services/pwa.service'
+import { useAuthStore } from '@/stores/useAuthStore'
 import type { IPwaQueueStatus } from '@/types/pwa'
 
 type TPwaLoadingStatus = 'idle' | 'loading' | 'ready' | 'error'
@@ -50,11 +52,18 @@ export const usePwaStore = create<IPwaStore>((set, get) => ({
       void get().refreshQueueStatus()
     }
     const unsubscribeWorkerMessages = subscribeToWorkerMessages((message) => {
+      if (message.type === 'PWA_REQUEST_AUTH_TOKEN') {
+        return // handled by the token responder below, carries no status payload
+      }
       set({
         ...message.payload,
         loadingStatus: message.type === 'PWA_SYNC_FAILED' ? 'error' : 'ready',
       })
     })
+    // Queued drafts hold no bearer token at rest — sign each replay with a live one.
+    const unsubscribeAuthTokenRequests = serveAuthTokenToWorker(
+      () => useAuthStore.getState().session?.accessToken ?? null,
+    )
 
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
@@ -64,6 +73,7 @@ export const usePwaStore = create<IPwaStore>((set, get) => ({
 
     return () => {
       unsubscribeWorkerMessages()
+      unsubscribeAuthTokenRequests()
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
       navigator.serviceWorker?.removeEventListener('controllerchange', handleControllerChange)

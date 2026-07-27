@@ -1,5 +1,6 @@
 import { PWA_SERVICE_WORKER_URL } from '@/config/pwa-config'
 import type {
+  IPwaAuthTokenReply,
   IPwaQueueStatus,
   IPwaRegistrationConfig,
   IPwaWorkerResponse,
@@ -178,6 +179,33 @@ export function subscribeToWorkerMessages(
     if (event.data?.type?.startsWith('PWA_')) {
       listener(event.data)
     }
+  }
+
+  navigator.serviceWorker.addEventListener('message', handleMessage)
+  return () => navigator.serviceWorker.removeEventListener('message', handleMessage)
+}
+
+/**
+ * Answer the worker's replay-time token requests. Queued drafts deliberately
+ * carry no bearer token at rest, so the worker asks an open page for a live one
+ * right before each replay; without this responder a queued draft can never be
+ * delivered after its original token expires.
+ *
+ * `getAccessToken` is injected (the auth store) to keep this service free of
+ * store imports.
+ */
+export function serveAuthTokenToWorker(getAccessToken: () => string | null): () => void {
+  if (!isSupported()) {
+    return () => undefined
+  }
+
+  const handleMessage = (event: MessageEvent<TPwaWorkerMessage>): void => {
+    if (event.data?.type !== 'PWA_REQUEST_AUTH_TOKEN') {
+      return
+    }
+
+    const reply: IPwaAuthTokenReply = { accessToken: getAccessToken() }
+    event.ports[0]?.postMessage(reply)
   }
 
   navigator.serviceWorker.addEventListener('message', handleMessage)

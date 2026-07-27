@@ -1,36 +1,35 @@
-# Continuation Prompt — paste into a fresh session (remote dev server)
+# Continuation Prompt — paste into a fresh session (macOS laptop)
 
 Copy everything in the block below as the first message to the new agent.
 
 ---
 
-You are continuing **Siaga Padi** — a rice pest & disease early-warning + advisory **PWA** for petani and penyuluh. Sprint 01 (Auth & Roles) is fully done, verified, and merged into `development` (PR #11). Your job this session: implement **Sprint 02 (Case Management)**.
+You are continuing **Siaga Padi** — a rice pest & disease early-warning + advisory **PWA** for petani and penyuluh. Sprint 01 (Auth & Roles) is done and merged (PR #11). **Sprint 02 (Case Management) was just implemented on the remote dev server and rsynced here** — your job: verify it on this Mac, close the one remaining task, then commit + push.
 
-WORK DIR: this is a plain file tree rsynced from the Mac working copy — **there is no `.git` here**. You cannot branch, commit, or push from this machine. Work here, then the result gets rsynced back to the Mac, where it's reviewed and committed. Do not attempt git operations; if you need repo history, ask for it to be provided.
+WORK DIR: `/Users/fahrialfiansyah121gmail.com/Documents/projects/siaga-padi` (git repo; remote `origin` on GitHub; trunk `development`). The rsynced Sprint 02 work is **uncommitted** — run `git status` first and review before staging. Nothing was committed on the remote side (that tree has no `.git`).
 
 FIRST, read these in order (do not skip):
 
-1. `docs/HANDOVER.md` — full state snapshot; §6 is the ordered Sprint 02 TODO, §8 explains this rsync-based workflow and its gotchas.
-2. `sprint/backlog/02-case-management/sprint.md` — sprint goal, acceptance criteria, dependency graph. **This sprint is still in `backlog/`, not `active/`** — promote it first per `.claude/skills/sprint-builder/SKILL.md` Step 2.
-3. `sprint/backlog/02-case-management/backend/00-schema-case.md` — the foundation task; everything else in the sprint depends on it.
-4. `brief/01_MANAJEMEN_KASUS_PETANI.md` — the feature brief (FR-002, FR-009) this sprint implements.
-5. `apps/backend/AI_GUIDE.md` and `apps/web/AI_GUIDE.md` — binding conventions per stack.
-6. `apps/web/docs/api-spec.md` — the existing Sprint 01 FE↔BE contract, for reference on conventions (envelope, camelCase DTOs); Sprint 02 needs its own contract for case endpoints.
-7. `CONTRIBUTING.md` + `.claude/skills/git-flow/SKILL.md` — git workflow (informational here — you can't run it, but code you write should be commit-ready).
+1. `docs/HANDOVER.md` — state snapshot; §4 has exact commands, §6 is your ordered TODO.
+2. `sprint/active/02-case-management/sprint.md` — sprint state (4/5 tasks done).
+3. `sprint/active/02-case-management/backend/00-schema-case.md` — the ONE open task; its Notes carry the exact psql steps.
+4. `apps/web/docs/api-spec-case.md` — the pinned Sprint 02 FE↔BE contract (status vs displayStage, idempotency, offline 202).
+5. `apps/backend/AI_GUIDE.md` + `apps/web/AI_GUIDE.md` — binding conventions.
+6. `CONTRIBUTING.md` + `.claude/skills/git-flow/SKILL.md` — git workflow.
 
 KEY FACTS:
 
-- Sprint 02 goal: petani (or penyuluh in assisted mode) creates a case via a 3-step wizard with consent + optional GPS, manages profil + lahan, and sees case history + timeline. GPS refusal must never block case creation — falls back to manual kabupaten/kecamatan or "belum tahu". Resubmission with the same idempotency key must not create duplicate cases.
-- Dependency order: `backend/00-schema-case.md` (fields/cases/case_events + state machine per FRD §6.5–6.6 + anti-duplicate lock, next migration number after `0009`) → `backend/01-case-routes.md` → `frontend/{01-case-wizard, 02-profile-lahan, 03-case-history}.md`.
-- Assisted-mode case creation reads the Sprint 01 assisted-session store — don't reinvent that; wire into it.
-- The case status state machine must follow FRD §6.5–6.6 exactly — Sprint 03/05/06 extend it later, so get the states/transitions right now.
-- **DB verification may not be possible here:** this same remote server previously had Docker socket permission denied for the working user and port 8000 occupied by another app, which blocked live migration-apply + RLS verification for Sprint 01's schema task — that had to be finished on the Mac instead. Check `docker compose version` and `docker ps` early. If Docker still isn't usable here, draft the migration SQL and models/DTOs fully, write the RLS policies, get everything else (routes, tests against a fake/mock repo, frontend) done and passing, and leave the live-apply + RLS two-user verification as the one explicitly flagged remaining step — same pattern Sprint 01 used successfully.
-- Backend: `python api.py` only (never `uvicorn api:app` — CLI arg parsing at import). Tests must never import `api.py`; any new test app fixture needs `register_siaga_exception_handlers(app)` or errors lose their envelope.
-- Frontend: Component → Zustand → Service → API only; `@/` imports; menus config-driven from `src/config/menu/*` — a new user-facing route needs both the route and the menu entry in the same unit of work.
-- Vocabulary rule still applies: no workplace-identifying words anywhere. Before considering anything "done for handoff", run `git grep -iE '\boff[i]ce\b|\bkant[o]r\b' -- ':!*.lock'` yourself if git is available at all here, or eyeball new files for it — the Mac side will re-gate on this before commit either way.
+- Sprint 02 is code-complete and test-verified: **119 pytest** (`cd apps/backend && ./venv/bin/pytest tests/`) and **152 vitest** (`cd apps/web && npm test`), `tsc --noEmit` clean, `npm run build:prod` passes. Re-run all four here before trusting anything.
+- **The backend venv and `apps/web/node_modules` were removed from the remote tree before sync**, so your local ones are untouched. If `apps/backend/venv` is missing locally: `python3.12 -m venv venv && ./venv/bin/pip install -r requirements.txt && ./venv/bin/pip install pytest pytest-cov httpx`.
+- **Only open item:** apply migration `apps/backend/supabase/migrations/0010_siaga_case.sql` to the local Supabase stack, then verify the state-machine trigger, the append-only `case_events` trigger, the unique idempotency key, and RLS with two users — all steps are spelled out in the task file's Notes. Docker was unavailable on the remote server, which is why this is pending (same pattern as Sprint 01's schema task).
+- Status model: the DB stores the **15 canonical FRD §6.5 statuses**; the Indonesian stage labels are a derived `displayStage`. Sprint 03/05/06 must extend BOTH the SQL trigger `enforce_case_transition()` and `LEGAL_TRANSITIONS` in `models/siaga_case.py` — they are mirrors.
+- A security review ran; all blocking findings are already fixed in the code you have: history pagination reads the real backend envelope (`totalElements`/`totalPages`), the wizard treats the service-worker's **HTTP 202** as "draft tersimpan" instead of a failure, and the offline queue no longer stores bearer tokens (replays are signed with a fresh token fetched from an open page; auth failures requeue instead of archiving the draft). Do not regress these.
+- Known risks logged, NOT fixed (decide before Sprint 05/09 build on them): penyuluh scoping matches bare kecamatan names without a kabupaten qualifier (name collisions across regencies → cross-region visibility); case create is non-atomic across three PostgREST writes; `areaKabupaten`/`areaKecamatan` on create are client-controlled free text that influence penyuluh visibility.
+- Secrets: `.env` / `.env.*` and `/.supabase/` are gitignored and must stay uncommitted. `.supabase/` was deliberately NOT synced back from the remote server.
 
-RULES: BaseResponse envelope everywhere (backend); no `os.getenv` (use `settings.*`); no `print` (loguru); business logic in `service/`, never `router/`. Conventional Commits format for whatever commit message you leave in a handoff note, but again — don't actually run git here.
+RULES: Conventional Commits, **no watermark/Co-Authored-By trailers**, stage narrowly, never force-push shared branches. Before EVERY commit run the vocabulary gate `git grep -iE '\boff[i]ce\b|\bkant[o]r\b' -- ':!*.lock'` (must be empty). Backend: BaseResponse envelope, `settings.*` not `os.getenv`, loguru not print, logic in `service/` not `router/`, `python api.py` only (never `uvicorn api:app`), tests must never import `api.py`. Frontend: Component → Zustand → Service → API, `@/` imports, config-driven menus, no new npm packages.
 
-NEXT TASK: promote `sprint/backlog/02-case-management/` → `sprint/active/` and update `sprint/01-sprint-planning.md` + `changelog/sprint-planning.md` (event: Promoted), then implement `backend/00-schema-case.md` first, in full, before touching anything downstream. Confirm you've read the docs above, then proceed.
+NEXT TASK: work `docs/HANDOVER.md` §6 in order — review the worktree, re-run the four verification commands, bring up Supabase if it is down, apply migration 0010 + run the negative trigger tests + two-user RLS checks, E2E smoke the wizard (all three location branches incl. an offline submit showing "draft tersimpan"), riwayat filters + load-more past 10 cases, and the case timeline; then close `backend/00-schema-case.md` (TODOs → `[x]`, header → `✅ Done`, `changelog/backend.md` entry), archive the sprint per `.claude/skills/sprint-builder/SKILL.md` §5, and commit + push. Ask the user before choosing the branch/PR shape.
+Verify each visible change (pytest/vitest/tsc/build, psql output for the trigger + RLS checks, a real browser pass for the E2E steps). Confirm you've read the docs above, then proceed.
 
 ---

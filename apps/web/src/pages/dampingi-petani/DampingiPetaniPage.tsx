@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { AssistedSearchDialog } from '@/features/penyuluh/assisted'
@@ -34,6 +35,12 @@ function DampingiPetaniPage() {
               Semua tindakan Anda tercatat atas nama petani ini. Gunakan tombol
               &ldquo;Akhiri Mode&rdquo; pada banner di atas untuk mengakhiri sesi.
             </p>
+            <Button asChild size="lg" className="mt-1 w-full rounded-xl font-semibold sm:w-auto">
+              <Link to="/periksa-tanaman">
+                <i className="ph ph-camera text-h6" aria-hidden="true" />
+                Periksa Tanaman atas nama {subject.displayName}
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       ) : (

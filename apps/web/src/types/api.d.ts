@@ -28,11 +28,18 @@ export interface ApiError {
 
 /* ── Siaga Padi envelope (docs/api-spec.md § Response envelope) ──────────── */
 
+/**
+ * Boilerplate pagination envelope as actually emitted by the backend
+ * (`models/pagination.py` → `{ size, totalElements, totalPages, scrollId }`),
+ * pinned in `docs/api-spec-case.md`. Do NOT rename these to
+ * currentPage/totalPage/totalItem — the server does not send those keys and
+ * the mismatch silently disables load-more.
+ */
 export interface SiagaPagination {
-  totalPage: number;
-  totalItem: number;
-  currentPage: number;
-  itemPerPage: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  scrollId?: string;
 }
 
 export interface SiagaMetaData {

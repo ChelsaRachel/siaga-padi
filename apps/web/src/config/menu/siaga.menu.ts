@@ -51,6 +51,14 @@ export const PETANI_MENU: IMenu[] = [
   createMenuItem({ id: 'sphome1', display: 'Beranda', name: 'beranda', path: '/', icon: 'house', isMainPage: true }),
   createMenuItem({ id: 'spprks2', display: 'Periksa Tanaman', name: 'periksa-tanaman', path: '/periksa-tanaman', icon: 'camera' }),
   createMenuItem({ id: 'sprwyt3', display: 'Riwayat', name: 'riwayat', path: '/riwayat', icon: 'clock-counter-clockwise' }),
+  createMenuItem({
+    id: 'spprfl4',
+    display: 'Profil',
+    name: 'profil',
+    path: '/profil',
+    icon: 'user-circle',
+    description: 'Data diri, izin, dan daftar lahan',
+  }),
 ]
 
 export const PENYULUH_MENU: IMenu[] = [

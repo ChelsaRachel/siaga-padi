@@ -9,6 +9,18 @@ import RoleGuard from './guards/RoleGuard'
 
 const HomePage = lazy(() => import('@/pages/home/HomePage'))
 const DampingiPetaniPage = lazy(() => import('@/pages/dampingi-petani/DampingiPetaniPage'))
+const CaseCreatePage = lazy(() => import('@/pages/case-create/CaseCreatePage'))
+const CasePhotoPage = lazy(() => import('@/pages/case-photo/CasePhotoPage'))
+const CaseHistoryPage = lazy(() => import('@/pages/case-history/CaseHistoryPage'))
+const CaseDetailPage = lazy(() => import('@/pages/case-detail/CaseDetailPage'))
+const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'))
+
+/**
+ * Sprint 02 case routes are shared by petani AND penyuluh: the wizard runs
+ * in assisted mode ("atas nama") for penyuluh and they may view binaan case
+ * history — never hard-restrict these to the petani role.
+ */
+const CASE_ROUTE_ROLES: Array<'petani' | 'penyuluh'> = ['petani', 'penyuluh']
 
 /**
  * Protected app routes — everything renders inside the AppLayout shell.
@@ -34,20 +46,55 @@ const mainRoutes: RouteObject[] = [
         ),
       },
 
-      // Petani (Sprint 02+)
+      // Case management (Sprint 02) — petani & penyuluh (assisted mode)
       {
         path: 'periksa-tanaman',
         element: (
-          <RoleGuard allowedRoles={['petani']}>
-            <ComingSoonPage title="Periksa Tanaman" icon="camera" sprintLabel="Sprint 02" />
+          <RoleGuard allowedRoles={CASE_ROUTE_ROLES}>
+            <Suspense fallback={<RouteFallback />}>
+              <CaseCreatePage />
+            </Suspense>
           </RoleGuard>
         ),
       },
       {
         path: 'riwayat',
         element: (
-          <RoleGuard allowedRoles={['petani']}>
-            <ComingSoonPage title="Riwayat" icon="clock-counter-clockwise" sprintLabel="Sprint 02" />
+          <RoleGuard allowedRoles={CASE_ROUTE_ROLES}>
+            <Suspense fallback={<RouteFallback />}>
+              <CaseHistoryPage />
+            </Suspense>
+          </RoleGuard>
+        ),
+      },
+      {
+        path: 'profil',
+        element: (
+          <RoleGuard allowedRoles={CASE_ROUTE_ROLES}>
+            <Suspense fallback={<RouteFallback />}>
+              <ProfilePage />
+            </Suspense>
+          </RoleGuard>
+        ),
+      },
+      {
+        path: 'kasus/:caseId',
+        element: (
+          <RoleGuard allowedRoles={CASE_ROUTE_ROLES}>
+            <Suspense fallback={<RouteFallback />}>
+              <CaseDetailPage />
+            </Suspense>
+          </RoleGuard>
+        ),
+      },
+      {
+        // Photo-flow placeholder — real flow lands in Sprint 03.
+        path: 'kasus/:caseId/foto',
+        element: (
+          <RoleGuard allowedRoles={CASE_ROUTE_ROLES}>
+            <Suspense fallback={<RouteFallback />}>
+              <CasePhotoPage />
+            </Suspense>
           </RoleGuard>
         ),
       },

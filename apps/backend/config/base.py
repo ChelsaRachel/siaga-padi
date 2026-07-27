@@ -106,6 +106,10 @@ class BaseSetting(BaseSettings):
     SUPABASE_TABLE_PENYULUH_ASSIGNMENT: str = Field(default="penyuluh_assignments")
     SUPABASE_TABLE_ASSISTED_SESSION: str = Field(default="assisted_sessions")
     SUPABASE_TABLE_LOGIN_LOCKOUT: str = Field(default="login_lockouts")
+    SUPABASE_TABLE_FIELD: str = Field(default="fields")
+    SUPABASE_TABLE_CASE: str = Field(default="cases")
+    SUPABASE_TABLE_CASE_EVENT: str = Field(default="case_events")
+    SUPABASE_TABLE_DELETION_REQUEST: str = Field(default="data_deletion_requests")
 
     # External Authentication Configuration
     LOGIN_METHOD: Optional[str] = Field(default=None)
