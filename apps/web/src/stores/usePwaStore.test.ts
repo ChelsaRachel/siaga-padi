@@ -5,6 +5,7 @@ vi.mock('@/services/pwa.service', () => ({
   isSupported: vi.fn().mockReturnValue(true),
   retryQueue: vi.fn(),
   subscribeToWorkerMessages: vi.fn().mockReturnValue(() => undefined),
+  serveAuthTokenToWorker: vi.fn().mockReturnValue(() => undefined),
 }))
 
 import * as pwaService from '@/services/pwa.service'

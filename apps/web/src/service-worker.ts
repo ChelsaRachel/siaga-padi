@@ -29,6 +29,7 @@ import {
   writeSyncMeta,
 } from '@/services/offline-draft-storage.service'
 import type {
+  IPwaAuthTokenReply,
   IPwaQueueStatus,
   IPwaWorkerResponse,
   TPwaWorkerRequest,
@@ -45,6 +46,15 @@ interface IQueueMetadata {
 
 const RETENTION_MILLISECONDS = PWA_QUEUE_RETENTION_MINUTES * 60 * 1000
 const RETRYABLE_STATUS_CODES = new Set([429])
+/**
+ * Auth failures on replay are NOT the draft's fault — the token captured at
+ * submit time simply expired. They must never archive the draft as permanently
+ * failed; the entry goes back to the queue and waits for a fresh token.
+ */
+const AUTH_STATUS_CODES = new Set([401, 403])
+const AUTH_TOKEN_TIMEOUT_MILLISECONDS = 3000
+const AUTH_UNAVAILABLE_MESSAGE =
+  'Menunggu sesi aktif untuk mengirim draft. Buka aplikasi dan masuk kembali.'
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Sinkronisasi draft gagal.'
@@ -84,6 +94,66 @@ function ensureIdempotencyKey(request: Request): { request: Request; idempotency
     request: new Request(request, { headers }),
     idempotencyKey,
   }
+}
+
+/**
+ * Drop the bearer token before the request is persisted. Queued drafts can sit
+ * in IndexedDB for up to the retention window, and a token at rest there is
+ * both a disclosure risk and useless (it expires long before replay).
+ * `attachFreshAuthorization` re-adds a live token at replay time.
+ */
+function stripAuthorization(request: Request): Request {
+  const headers = new Headers(request.headers)
+  headers.delete('authorization')
+  return new Request(request, { headers })
+}
+
+/** Ask any open page for the current access token (null when none can answer). */
+async function requestAuthTokenFromClients(): Promise<string | null> {
+  const clients = await self.clients.matchAll({
+    includeUncontrolled: true,
+    type: 'window',
+  })
+
+  for (const client of clients) {
+    const token = await new Promise<string | null>((resolve) => {
+      const channel = new MessageChannel()
+      const timeout = self.setTimeout(() => {
+        channel.port1.close()
+        resolve(null)
+      }, AUTH_TOKEN_TIMEOUT_MILLISECONDS)
+
+      channel.port1.onmessage = (event: MessageEvent<IPwaAuthTokenReply>) => {
+        self.clearTimeout(timeout)
+        channel.port1.close()
+        resolve(event.data?.accessToken ?? null)
+      }
+
+      client.postMessage({ type: 'PWA_REQUEST_AUTH_TOKEN' }, [channel.port2])
+    })
+
+    if (token) {
+      return token
+    }
+  }
+
+  return null
+}
+
+/**
+ * Rebuild the queued request with a live bearer token. Throwing when no token
+ * is available keeps the draft queued (retried on the next sync/app open)
+ * instead of burning a retry attempt or archiving it as failed.
+ */
+async function attachFreshAuthorization(request: Request): Promise<Request> {
+  const token = await requestAuthTokenFromClients()
+  if (!token) {
+    throw new Error(AUTH_UNAVAILABLE_MESSAGE)
+  }
+
+  const headers = new Headers(request.headers)
+  headers.set('Authorization', `Bearer ${token}`)
+  return new Request(request, { headers })
 }
 
 async function getQueueStatus(): Promise<IPwaQueueStatus> {
@@ -149,7 +219,20 @@ async function replayDraftQueue(queue: Queue, isManualRetry = false): Promise<vo
     const metadata = parseQueueMetadata(entry.metadata)
 
     try {
-      const response = await fetch(entry.request.clone())
+      const authorizedRequest = await attachFreshAuthorization(entry.request.clone())
+      const response = await fetch(authorizedRequest)
+
+      if (AUTH_STATUS_CODES.has(response.status)) {
+        // Expired/rejected session: requeue untouched (no attempt burned) so a
+        // later replay with a valid session can still deliver the draft.
+        await queue.unshiftRequest({
+          request: entry.request,
+          timestamp: entry.timestamp,
+          metadata,
+        })
+        retryError = new Error(AUTH_UNAVAILABLE_MESSAGE)
+        break
+      }
 
       if (response.status === 409) {
         await archiveFailedRequest(
@@ -177,8 +260,21 @@ async function replayDraftQueue(queue: Queue, isManualRetry = false): Promise<vo
 
       sentCount += 1
     } catch (error) {
-      const attempts = metadata.attempts + 1
       const errorMessage = getErrorMessage(error)
+
+      if (errorMessage === AUTH_UNAVAILABLE_MESSAGE) {
+        // No live session to sign the replay with — keep the draft intact and
+        // do NOT count this as a delivery attempt.
+        await queue.unshiftRequest({
+          request: entry.request,
+          timestamp: entry.timestamp,
+          metadata,
+        })
+        retryError = new Error(errorMessage)
+        break
+      }
+
+      const attempts = metadata.attempts + 1
 
       if (attempts >= PWA_MAX_RETRY_ATTEMPTS) {
         await archiveFailedRequest(
@@ -227,8 +323,9 @@ async function queueDraftRequest(request: Request, reason: unknown): Promise<Res
   const preparedRequest = ensureIdempotencyKey(request)
 
   try {
+    // Persist WITHOUT the bearer token; replay attaches a fresh one.
     await draftQueue.pushRequest({
-      request: preparedRequest.request.clone(),
+      request: stripAuthorization(preparedRequest.request.clone()),
       metadata: { attempts: 0, createdAt: Date.now() } satisfies IQueueMetadata,
     })
     await writeSyncMeta({
