@@ -1,6 +1,6 @@
 # HANDOVER — Siaga Padi (Web PWA MVP)
 
-State snapshot for picking this up in a fresh session. Updated 2026-07-26 (5th revision — Sprint 01 fully verified, merged into `development`; next up is Sprint 02, Case Management).
+State snapshot for picking this up in a fresh session. Updated 2026-07-26 (6th revision — Sprint 02 Case Management implemented on the remote dev server and rsynced here, uncommitted; one schema-verification task remains, see §6).
 Pair with `docs/FRD_Siaga_Padi_Web_PWA_MVP_v0.2.0.md` (the in-scope spec), `CONTRIBUTING.md` (team workflow), and `sprint/01-sprint-planning.md` (sprint tracking).
 
 - Repo: `/Users/fahrialfiansyah121gmail.com/Documents/projects/siaga-padi` (on the Mac) — also being worked from a remote Linux dev server (`fahri@10.12.1.194`) via one-directional `rsync` (see §8, no `.git` on that side).
@@ -20,6 +20,14 @@ Pair with `docs/FRD_Siaga_Padi_Web_PWA_MVP_v0.2.0.md` (the in-scope spec), `CONT
 - `.claude/`, `.agents/`, `.mcp.json`, `AGENTS.md`, `CLAUDE.md` are machine-local private tooling, gitignored — except `.claude/skills/{git-flow,session-handover}` which are tracked.
 
 ## 2. Done so far
+
+### Sprint 02 — Case Management (implemented 2026-07-26 on the remote dev server, rsynced, UNCOMMITTED)
+
+- **Backend:** migration `0010_siaga_case.sql` (`fields`, `cases`, `case_events`, `data_deletion_requests` + RLS + `next_case_code()` → 'KS-YYYY-NNNNNN'); state machine enforced in **two mirrored places** — SQL trigger `enforce_case_transition()` and `LEGAL_TRANSITIONS` in `models/siaga_case.py`; `case_events` append-only via trigger. Routes: `POST /cases` (Idempotency-Key required, replay-safe, assisted-aware, role-restricted to petani or penyuluh-with-session), `POST /cases/get-all` (role-scoped + displayStage filter), `GET /cases/{id}`, `GET /cases/{id}/timeline`, plus `/farmer/profile` (profile update, lahan CRUD, deletion request). **119 pytest green**, coverage 89%/86% on the new services.
+- **Frontend:** 3-step wizard at `/periksa-tanaman` (GPS tap-only → manual-area fallback → "belum tahu"; idempotency key per wizard session), `/profil` (profile card + consent indicators + lahan gallery + honest deletion request), `/riwayat` (dynamic-filter module + new ChipGroup component) and `/kasus/:caseId` (timeline + named staged progress, never a bare spinner), `/kasus/:caseId/foto` Sprint-03 placeholder. **152 vitest green**, `tsc` clean, `build:prod` passes.
+- **Status model:** DB stores the 15 canonical FRD §6.5 statuses; the Indonesian stage labels are a derived `displayStage` (never stored). Documented deviation from the task file's 7-value list — the brief makes the FRD authoritative and Sprint 03/05/06 need the full set.
+- **Security review findings fixed:** history pagination now reads the real backend envelope (`totalElements`/`totalPages` — load-more past 10 cases was previously dead); the wizard reports the service worker's HTTP 202 as "draft tersimpan di perangkat" instead of a failure (and mints a new key so edit-and-resubmit can't be silently discarded by idempotent replay); the offline queue no longer persists bearer tokens — replays are signed with a fresh token requested from an open page, and auth failures requeue instead of archiving the draft as permanently failed; idempotency keys only replay for their own creator; create is role-restricted; coords are range-validated.
+- **Remaining:** `sprint/active/02-case-management/backend/00-schema-case.md` is `🚧` — live migration apply + trigger/RLS verification could not run on the remote server (no Docker access). See §6.
 
 ### Bootstrap + FR-014 + Sprint 01 (merged 2026-07-26, PR #11)
 - 5 earlier PRs merged into `development`; toolchain proven (fnm → Node 20, uv → Py 3.12 for repo tooling); Tani Ramah tokens WCAG-verified; icons vendored; rebrand done.
@@ -91,21 +99,30 @@ docker exec supabase-db psql -U postgres -c "begin; set local role authenticated
 - `supabase-init` scripts' default `--sandbox-root` is wrong when the skill lives under `.claude/skills/` — always pass `--sandbox-root "$(pwd)"`.
 - Local branch `dev-fahri` holds pre-rule vocabulary — never push it; safe to delete.
 - Icon PNGs in `apps/web/public/images/` are still boilerplate artwork.
+- **The case state machine lives in TWO mirrors** — the SQL trigger `enforce_case_transition()` in migration 0010 and `LEGAL_TRANSITIONS` in `models/siaga_case.py`. Sprint 03/05/06 must change both together; `tests/test_case_transitions.py` pins the Python side to the FRD tables.
+- **Do not "simplify" the offline-queue auth flow** back to storing the Authorization header: replays are deliberately signed with a fresh token fetched from an open page (`serveAuthTokenToWorker`), and 401/403 on replay requeues instead of archiving — that combination is what stops offline drafts from being silently lost.
+- The FE pagination envelope is the boilerplate one (`{size, totalElements, totalPages, scrollId}`). Renaming those to currentPage/totalPage/totalItem silently disables load-more — it already happened once.
 
-## 6. Next steps — Sprint 02: Case Management
+## 6. Next steps — finish & land Sprint 02
 
-Sprint 02 is currently in **backlog** (`sprint/backlog/02-case-management/`), not yet promoted to `active/`. Goal (from `brief/01_MANAJEMEN_KASUS_PETANI.md`, FR-002/FR-009): 3-step case wizard with consent + optional location, profile/lahan management, case history + timeline.
+Sprint 02 is **promoted to `active/` and code-complete except its schema verification** (drafted on the remote dev server 2026-07-26, rsynced here, uncommitted). 4/5 tasks are `✅ Done`; `backend/00-schema-case.md` is `🚧` pending the live DB checks below.
 
-1. **Sync first:** `git checkout development && git pull` (picks up merged PR #11), delete the now-stale local `feat/sprint-01-auth-roles` branch, branch fresh off `development` for Sprint 02 (e.g. `feat/sprint-02-case-management`).
-2. **Promote the sprint:** `sprint/backlog/02-case-management/` → `sprint/active/` per `.claude/skills/sprint-builder/SKILL.md` Step 2; update `sprint/01-sprint-planning.md` (Status → 🚧, Started At → today) and `changelog/sprint-planning.md` (event: Promoted).
-3. **Foundation first:** `backend/00-schema-case.md` (fields/cases/case_events + state machine per FRD §6.5–6.6 + anti-duplicate lock, migration `0010_*.sql`) — everything else in the sprint depends on it.
-4. **If working on the remote Linux dev server:** that box previously had `Docker socket permission-denied` for user `fahri` (not in the `docker` group) and port 8000 was occupied by another app — this blocked live migration-apply + RLS verification for Sprint 01's schema task and had to be finished back on this Mac. Check whether that's been fixed before assuming the remote can do DB verification; otherwise plan to draft the migration remotely and verify it here, same pattern as Sprint 01.
-5. Then: `backend/01-case-routes.md` → `frontend/{01-case-wizard, 02-profile-lahan, 03-case-history}.md`.
-6. Same closure procedure as Sprint 01 when done (task TODOs → `[x]`, changelog entries, archive, planning table update).
+1. **Review the worktree:** `git status` + `git diff --stat`. Expect the Sprint 02 backend (`router/{cases,farmer_profile}.py`, `service/{cases,farmer_profile,siaga_case_support}.py`, `dto/{cases,farmer_profile,siaga_case}.py`, `models/siaga_case.py`, `middleware/user_context.py`, migration `0010_siaga_case.sql`, tests) and frontend (`pages/{case-create,case-photo,profile,case-history,case-detail}/`, `features/case/*`, `services/{cases,farmer-profile}.service.ts`, service-worker + pwa auth-token changes, `modules/dynamic-filter/components/ChipGroup.tsx`), plus sprint/changelog/doc updates. Do not discard anything.
+2. **Re-verify locally:** `cd apps/backend && ./venv/bin/pytest tests/` → 119 passed; `cd apps/web && npm test` → 152 passed; `npx tsc --noEmit`; `npm run build:prod`. (Recreate the venv first if missing — see §3/§4.)
+3. **Supabase up** (`docker compose ps` in `.supabase/docker`, or re-init per §4), then **apply migration 0010**:
+   `docker cp apps/backend/supabase/migrations/0010_siaga_case.sql supabase-db:/tmp/m10.sql && docker exec supabase-db psql -U postgres -v ON_ERROR_STOP=1 -f /tmp/m10.sql`
+4. **Negative DB checks** (this is the "done when" of task 00): an illegal transition (`DRAFT → REVIEWED`) must fail with 23514; `update case_events set note='x'` must fail with 55000; a duplicate `idempotency_key` insert must fail; then the two-user RLS check (petani sees only own cases, penyuluh only binaan-kecamatan cases) using the single-`-c` `begin; set local …; commit;` pattern from §4.
+5. **E2E smoke** (`python api.py` + `npm run dev`, login as a seeded petani): wizard all three location branches (GPS granted / denied→manual area / belum tahu) → DRAFT case + photo placeholder with the case code; double-submit creates ONE case; an offline submit (DevTools offline) shows "Draft tersimpan di perangkat" and delivers after going back online; `/profil` edit + lahan add/edit + deletion request; `/riwayat` filters + **load-more past 10 cases**; `/kasus/:id` timeline + staged progress.
+6. **Close task 00 + archive the sprint:** TODOs → `[x]`, header → `✅ Done`, append `changelog/backend.md`; then `mv sprint/active/02-case-management sprint/archive/`, update `sprint/01-sprint-planning.md` (`✅ Done`, Completed At, link → `./archive/`), add the outcome paragraph to `sprint.md`, append `changelog/sprint-planning.md` (Archived).
+7. **Housekeeping — stale duplicate sprint folder:** `sprint/backlog/01-auth-roles/` exists alongside the canonical `sprint/archive/01-auth-roles/`. The backlog copy is the original pre-work version (all `📋 Planned`, dated 2026-07-25) and contradicts both the archive copy (`✅ Done`) and the planning table (which links to `./archive/`). It was NOT created by the remote session — it most likely survived a branch switch / a non-`--delete` rsync. Confirm with `git log -- sprint/backlog/01-auth-roles` and then `git rm -r sprint/backlog/01-auth-roles` if git agrees it is a leftover. (Deleting it on the remote server would not propagate: the pull-back rsync has no `--delete`.)
+8. **Commit + push** — vocabulary gate first, narrow staging, Conventional Commits without trailers. Suggested slicing: `feat: sprint 02 case management (BE+FE)`, `fix: offline queue auth lifecycle + queued-draft UX`, `docs: sprint 02 closure + handover`.
+9. **Then Sprint 03 — Photo & Quality** (`sprint/backlog/03-photo-quality/`), which extends the case state machine (DRAFT→CAPTURED→QUALITY_REJECTED/QUEUED) in BOTH mirrors (see §5 traps).
 
 ## 7. Blockers / decisions for the user
 
-- **Remote-server Docker access** — unresolved as of last check; relevant again for Sprint 02's schema task if worked there (see §6.4).
+- **Branch/PR shape for Sprint 02** — one PR off `development`, or split BE/FE? (The offline-queue fix touches FR-014 files from the earlier PWA slice.)
+- **Kecamatan-name collision risk** (logged, unfixed): penyuluh scoping matches bare kecamatan names with no kabupaten qualifier, in RLS and in the service layer. Kecamatan names repeat across regencies, so an unrelated penyuluh could see cases from another kabupaten. Pairing kabupaten+kecamatan in `penyuluh_assignments` is a data-model decision worth settling **before** Sprint 09's area features.
+- **Remote-server Docker access** — still permission-denied for user `fahri` (not in the `docker` group), so every schema task must be verified on this Mac. Adding that user to the `docker` group would let the remote finish its own DB verification.
 - Standing items from earlier revisions: repo recreate vs accept history residue; GitHub default branch → `development` (still `dev-chelsa`); Mapbox token rotation upstream; replace icon artwork.
 
 ## 8. Remote dev-server workflow (rsync, no git)

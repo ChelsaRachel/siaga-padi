@@ -6,6 +6,24 @@ Append-only. Newest entries at the top. Updated whenever a backend task is creat
 
 ---
 
+### 2026-07-26 · [Sprint 02 — case-management](../sprint/archive/02-case-management/sprint.md) · Task: [00 — Schema Case](../sprint/archive/02-case-management/backend/00-schema-case.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/supabase/migrations/0010_siaga_case.sql`, `apps/backend/models/siaga_case.py`, `apps/backend/dto/siaga_case.py`, `apps/backend/tests/test_case_transitions.py`
+> Migration 0010 diterapkan di stack Supabase lokal. Trigger transisi ilegal (`23514`), append-only `case_events` (`55000`), kunci idempotensi unik (`23505`), dan RLS petani/penyuluh lulus verifikasi live; 119 pytest tetap hijau.
+
+### 2026-07-26 · [Sprint 02 — case-management](../sprint/active/02-case-management/sprint.md) · Task: [01 — Case Routes](../sprint/active/02-case-management/backend/01-case-routes.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/router/cases.py`, `apps/backend/router/farmer_profile.py`, `apps/backend/service/cases.py`, `apps/backend/service/farmer_profile.py`, `apps/backend/service/siaga_case_support.py`, `apps/backend/dto/cases.py`, `apps/backend/dto/farmer_profile.py`, `apps/backend/middleware/user_context.py`, `apps/backend/exceptions/siaga_exceptions.py`, `apps/backend/api.py`, `apps/backend/tests/`
+> Kasus idempoten (header wajib, replay hanya oleh pembuat key), validasi FR-002 lengkap, jalur pendampingan (pemilik = subjek), daftar ter-scope peran + filter displayStage, detail/linimasa dengan 404 identik anti-enumerasi, profil/lahan/permintaan-penghapusan. 119 pytest hijau (coverage 89%/86%). Hardening review: pembatasan peran create (petani, atau penyuluh bersesi), batas koordinat lat ±90 / lng ±180.
+
+### 2026-07-26 · [Sprint 02 — case-management](../sprint/active/02-case-management/sprint.md) · Task: [00 — Schema Case](../sprint/active/02-case-management/backend/00-schema-case.md) · 📋 Added
+
+**Event:** Task created
+**Files:** `apps/backend/supabase/migrations/0010_siaga_case.sql`, `apps/backend/models/siaga_case.py`, `apps/backend/dto/siaga_case.py`, `apps/backend/tests/test_case_transitions.py`
+> Foundation: lahan/kasus/case_events/permintaan-penghapusan + state machine FRD §6.5–6.6 (trigger DB + tabel Python satu-sumber) + kunci anti-duplikat + RLS. Status kanonik FRD disimpan; tahap Indonesia sebagai `displayStage` turunan. Apply migration + verifikasi RLS dua-user menunggu stack Supabase (server dev tanpa akses Docker).
+
 ### 2026-07-26 · [Sprint 01 — auth-roles](../sprint/active/01-auth-roles/sprint.md) · Task: [00 — Schema Auth](../sprint/active/01-auth-roles/backend/00-schema-auth.md) · ✅ Done
 
 **Event:** Task completed

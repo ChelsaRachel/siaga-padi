@@ -6,6 +6,18 @@ Append-only. Newest entries at the top. Updated whenever sprint status changes i
 
 ---
 
+### 2026-07-26 · Sprint 02 — case-management · ARCHIVED
+
+**Event:** Archived
+**Sprint:** [02-case-management](../sprint/archive/02-case-management/sprint.md)
+> Semua 5 task selesai. Migration 0010 + trigger/idempotensi/RLS diverifikasi live, seluruh test/build hijau, dan smoke browser membuktikan wizard, antrean offline, profil/lahan, pagination/filter, serta linimasa.
+
+### 2026-07-26 · Sprint 02 — case-management · PROMOTED
+
+**Event:** Promoted to active
+**Sprint:** [02-case-management](../sprint/active/02-case-management/sprint.md)
+> Sprint kedua dimulai: wizard kasus 3 langkah + profil/lahan + riwayat & linimasa (FR-002, FR-009). Foundation task: `backend/00-schema-case.md` (migration 0010, state machine FRD §6.5–6.6, kunci anti-duplikat).
+
 ### 2026-07-26 · Sprint 01 — auth-roles · ARCHIVED
 
 **Event:** Archived

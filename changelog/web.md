@@ -6,6 +6,24 @@ Append-only. Newest entries at the top. Updated whenever a frontend task is crea
 
 ---
 
+### 2026-07-26 · [Sprint 02 — case-management](../sprint/active/02-case-management/sprint.md) · Task: [03 — Riwayat Kasus & Linimasa](../sprint/active/02-case-management/frontend/03-case-history.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/pages/case-history/`, `apps/web/src/pages/case-detail/`, `apps/web/src/features/case/history/`, `apps/web/src/modules/dynamic-filter/components/ChipGroup.tsx`, `apps/web/src/types/api.d.ts`
+> Riwayat berfilter (lahan/waktu/displayStage chip, preset `?fieldId=`) + detail dengan linimasa kronologis dan progres bertahap bernama (bukan spinner). Modul dynamic-filter dipakai + komponen ChipGroup baru terdaftar di skill-nya. Perbaikan review: bentuk pagination diselaraskan ke envelope backend (`totalElements`/`totalPages`) — sebelumnya tombol "muat lebih banyak" tidak pernah muncul untuk >10 kasus.
+
+### 2026-07-26 · [Sprint 02 — case-management](../sprint/active/02-case-management/sprint.md) · Task: [02 — Profil Petani & Lahan](../sprint/active/02-case-management/frontend/02-profile-lahan.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/pages/profile/`, `apps/web/src/features/case/fields/`, `apps/web/src/services/farmer-profile.service.ts`, `apps/web/src/config/menu/siaga.menu.ts`
+> Kartu profil (nama panggilan, area, status akun, indikator consent lokasi/riset) + galeri kartu lahan dengan tambah/ubah, buka lahan → riwayat lahan tersebut, dan permintaan penghapusan data berteks jujur (diproses sesuai retensi, bukan seketika). Tanpa field identitas nasional. Menu "Profil" ditambahkan config-driven.
+
+### 2026-07-26 · [Sprint 02 — case-management](../sprint/active/02-case-management/sprint.md) · Task: [01 — Wizard Kasus 3 Langkah](../sprint/active/02-case-management/frontend/01-case-wizard.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/pages/case-create/`, `apps/web/src/pages/case-photo/`, `apps/web/src/features/case/create/`, `apps/web/src/services/cases.service.ts`, `apps/web/src/service-worker.ts`, `apps/web/src/services/pwa.service.ts`, `apps/web/src/stores/usePwaStore.ts`, `apps/web/src/routes/main.routes.tsx`
+> Wizard 3 langkah mobile-first: pilih/buat lahan + panel tujuan data, GPS opsional (tap-only) dengan fallback area manual dan opsi "belum tahu", ringkasan + kirim idempoten. Perbaikan review jalur offline FR-014: respons 202 antrean kini disajikan jujur sebagai "draft tersimpan di perangkat" (bukan kegagalan) dan token bearer tidak lagi disimpan di antrean — replay ditandatangani token segar dari halaman, kegagalan auth di-antre-ulang alih-alih diarsipkan permanen.
+
 ### 2026-07-26 · [Sprint 01 — auth-roles](../sprint/active/01-auth-roles/sprint.md) · Task: [03 — Assisted Mode UI](../sprint/active/01-auth-roles/frontend/03-assisted-mode-ui.md) · ✅ Done
 
 **Event:** Task completed
