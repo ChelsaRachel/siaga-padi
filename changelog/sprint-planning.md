@@ -6,6 +6,18 @@ Append-only. Newest entries at the top. Updated whenever sprint status changes i
 
 ---
 
+### 2026-07-29 · Sprint 03 — photo-quality · ARCHIVED
+
+**Event:** Archived
+**Sprint:** [03-photo-quality](../sprint/archive/03-photo-quality/sprint.md)
+> Semua 5 task selesai. Migration 0011 + bucket privat diverifikasi live (signed URL 200, akses publik 400), gerbang kualitas deterministik + dedup + EXIF-strip teruji (138 pytest), alur kamera terpandu→unggah→kualitas→escalate lengkap di web (177 vitest, tsc bersih, build hijau).
+
+### 2026-07-29 · Sprint 03 — photo-quality · PROMOTED
+
+**Event:** Promoted to active
+**Sprint:** [03-photo-quality](../sprint/active/03-photo-quality/sprint.md)
+> Sprint ketiga dimulai: kamera terpandu + unggah dengan progres + gerbang kualitas & retake (FR-003, FR-004). Foundation task: `backend/00-schema-photos.md` (case_photos + bucket `case-photos`).
+
 ### 2026-07-26 · Sprint 02 — case-management · ARCHIVED
 
 **Event:** Archived

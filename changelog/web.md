@@ -6,6 +6,24 @@ Append-only. Newest entries at the top. Updated whenever a frontend task is crea
 
 ---
 
+### 2026-07-29 · [Sprint 03 — photo-quality](../sprint/archive/03-photo-quality/sprint.md) · Task: [03 — Kartu Hasil Kualitas & Panduan Foto Ulang](../sprint/archive/03-photo-quality/frontend/03-quality-feedback.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/features/case/photo/components/QualityResultCard.tsx`, `apps/web/src/features/case/photo/components/RetakeTipsPanel.tsx`, `apps/web/src/features/case/photo/components/EscalateSection.tsx`, `apps/web/src/features/case/photo/components/QualityFeedback.test.tsx`, `apps/web/src/pages/case-photo/CasePhotoPage.tsx`
+> Kartu kualitas per foto (status + maks 3 alasan sederhana, `ambang` diterima-dengan-catatan, tanpa skor teknis), panel tips foto ulang per alasan dengan contoh sebelum/sesudah, tombol "Kirim ke Penyuluh Saja" muncul setelah 3× gagal (konfirmasi jujur tanpa auto-diagnosis), dan auto-lanjut ke route analisis (detail kasus, placeholder Sprint 05) saat 2 foto diterima.
+
+### 2026-07-29 · [Sprint 03 — photo-quality](../sprint/archive/03-photo-quality/sprint.md) · Task: [02 — Unggah dengan Progres & Coba Ulang](../sprint/archive/03-photo-quality/frontend/02-upload-progress.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/services/photos.service.ts`, `apps/web/src/services/api-endpoints.ts`, `apps/web/src/types/siaga-photo.d.ts`, `apps/web/src/features/case/photo/store/usePhotoFlowStore.ts`, `apps/web/src/features/case/photo/utils/fingerprint.ts`, `apps/web/src/features/case/photo/components/UploadProgressCard.tsx`, `apps/web/src/test/setup.ts`
+> Unggah per foto dengan bilah progres, badge "menunggu jaringan" saat offline (foto tetap di perangkat), tombol coba lagi yang mengirim ulang bytes+fingerprint yang sama (server replay → tidak pernah dobel), anti-duplikat sisi klien via sha256, dan auto-kirim ulang saat koneksi kembali. Bentuk state slot dijaga kompatibel untuk antrean offline Sprint 07.
+
+### 2026-07-29 · [Sprint 03 — photo-quality](../sprint/archive/03-photo-quality/sprint.md) · Task: [01 — Kamera Terpandu](../sprint/archive/03-photo-quality/frontend/01-guided-camera.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/features/case/photo/components/PhotoExamples.tsx`, `apps/web/src/features/case/photo/components/CameraCapture.tsx`, `apps/web/src/features/case/photo/components/PhotoPreview.tsx`, `apps/web/src/features/case/photo/components/CameraCapture.test.tsx`, `apps/web/src/features/case/photo/photo-labels.ts`, `apps/web/src/pages/case-photo/CasePhotoPage.tsx`, `apps/web/src/routes/main.routes.tsx`
+> Galeri contoh baik/buruk → kamera penuh-layar (getUserMedia, bingkai panduan, penghitung "Foto 1 dari 2 (maks 3)", tips cahaya/fokus) → pratinjau Foto Ulang / Pakai Foto Ini. Kamera tak tersedia/izin ditolak → unggah galeri dengan panduan sama. Catatan privasi EXIF + catatan penyuluh saat datang dari "perlu foto ulang". Placeholder Sprint 02 diganti alur nyata; 177 vitest hijau, tsc bersih, build staging hijau.
+
 ### 2026-07-26 · [Sprint 02 — case-management](../sprint/active/02-case-management/sprint.md) · Task: [03 — Riwayat Kasus & Linimasa](../sprint/active/02-case-management/frontend/03-case-history.md) · ✅ Done
 
 **Event:** Task completed

@@ -27,6 +27,8 @@ ROUTER_MODULES = {
     # Siaga Padi Sprint 02 (Case Management): /cases/* and /farmer/profile/*.
     "cases": "cases",
     "farmer_profile": "farmer_profile",
+    # Siaga Padi Sprint 03 (Photo & Quality): /cases/{id}/photos*.
+    "photos": "photos",
     # Mandatory: agent_mgmt is the agent management plane that every Argus app needs.
     # Cannot be disabled via --routers / ENABLED_ROUTERS — be-python is the service
     # layer for the workforce of agents.

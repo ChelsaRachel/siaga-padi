@@ -110,6 +110,8 @@ class BaseSetting(BaseSettings):
     SUPABASE_TABLE_CASE: str = Field(default="cases")
     SUPABASE_TABLE_CASE_EVENT: str = Field(default="case_events")
     SUPABASE_TABLE_DELETION_REQUEST: str = Field(default="data_deletion_requests")
+    SUPABASE_TABLE_CASE_PHOTO: str = Field(default="case_photos")
+    SUPABASE_BUCKET_CASE_PHOTOS: str = Field(default="case-photos")
 
     # External Authentication Configuration
     LOGIN_METHOD: Optional[str] = Field(default=None)

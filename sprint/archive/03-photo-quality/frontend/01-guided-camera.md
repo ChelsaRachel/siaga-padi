@@ -2,7 +2,7 @@
 
 **Stack:** frontend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** no
 **Autonomous:** yes
 **Depends on:**
@@ -26,11 +26,11 @@ Layar contoh foto baik/buruk → kamera penuh-layar (getUserMedia) dengan bingka
 
 ## TODOs
 
-- [ ] Good/bad example gallery shown before first capture
-- [ ] Camera with frame overlay + counter; capture → preview → retake/use
-- [ ] No camera / permission denied → gallery upload with the same guidance
-- [ ] Privacy note about EXIF stripping; reviewer-guidance note shown when arriving from "perlu foto ulang"
-- [ ] Component tests for fallback branch + counter limits (min 2, max 3)
+- [x] Good/bad example gallery shown before first capture
+- [x] Camera with frame overlay + counter; capture → preview → retake/use
+- [x] No camera / permission denied → gallery upload with the same guidance
+- [x] Privacy note about EXIF stripping; reviewer-guidance note shown when arriving from "perlu foto ulang"
+- [x] Component tests for fallback branch + counter limits (min 2, max 3)
 
 ## Done when
 
@@ -40,11 +40,13 @@ On a phone-sized viewport: capture two photos through the guided flow and reach 
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/web.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/web.md` (Task completed)
 
 ## Notes
 
 (Append-only.)
+
+- 2026-07-29 — Delivered as `features/case/photo/` (PhotoExamples, CameraCapture w/ frame overlay + gallery fallback, PhotoPreview) orchestrated by the rewritten `pages/case-photo/CasePhotoPage.tsx` (placeholder replaced; route path unchanged, wizard entry still works). Done-when verified via component tests: jsdom has no `mediaDevices`, so `CameraCapture.test.tsx` exercises the real fallback branch (gallery input + counter + EXIF note + reason tips + reviewer note); counter min-2/max-3 limits covered in `usePhotoFlowStore.test.ts` (`buildCounterLabel`). 177 vitest green, tsc clean, staging build green.

@@ -2,7 +2,7 @@
 
 **Stack:** backend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** yes
 **Autonomous:** no — one-time schema/storage migration.
 **Depends on:**
@@ -30,9 +30,9 @@ Migration foto kasus + bucket penyimpanan: status kualitas per foto, alasan peno
 
 ## TODOs
 
-- [ ] Draft `0011_case_photos.sql` (table + unique(case_id, fingerprint) + indexes)
-- [ ] Create bucket + policy: owner/penyuluh-scoped signed access, no public reads
-- [ ] Models + DTOs; migration applied on local stack
+- [x] Draft `0011_case_photos.sql` (table + unique(case_id, fingerprint) + indexes)
+- [x] Create bucket + policy: owner/penyuluh-scoped signed access, no public reads
+- [x] Models + DTOs; migration applied on local stack
 
 ## Done when
 
@@ -42,11 +42,13 @@ Migration applies; duplicate fingerprint insert for the same case fails; unautho
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/backend.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/backend.md` (Task completed)
 
 ## Notes
 
 (Append-only.)
+
+- 2026-07-29 — Migration 0011 applied on the local stack; duplicate fingerprint insert fails with 23505; bucket `case-photos` is private (public GET/no-token GET → 400) while a service-minted signed URL returns 200. Escalation flag (`needs_human_review`, `review_reason`) added to `cases` here because FRD §6.5 has no DRAFT→NEEDS_REVIEW edge — Sprint 06 consumes the flag. Infra: supabase-storage's bind mount was swapped for a named Docker volume (macOS host FS lacks xattr support → storage API 500s).

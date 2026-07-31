@@ -45,6 +45,7 @@ from service.siaga_case_support import (
     FIELD_NOT_FOUND_MESSAGE,
     SiagaCaseBaseRepository,
     build_field_row,
+    is_case_visible,
     new_id,
     now_iso,
     parse_timestamp,
@@ -529,20 +530,7 @@ class CaseService:
         return row
 
     def _is_visible(self, row: dict, caller: dict) -> bool:
-        role = caller["role"]
-        if row["owner_profile_id"] == caller["id"]:
-            return True
-        if role in (ROLE_ADMIN, ROLE_DOMAIN_REVIEWER):
-            return True
-        if role != ROLE_PENYULUH:
-            return False
-        areas = self.repo.get_assignment_areas(caller["user_id"])
-        if row.get("area_kecamatan") in areas:
-            return True
-        if not row.get("field_id"):
-            return False
-        field = self.repo.get_field_by_id(row["field_id"]) or {}
-        return field.get("area_kecamatan") in areas
+        return is_case_visible(self.repo, row, caller)
 
     # ---- DTO building ----------------------------------------------------------
 
