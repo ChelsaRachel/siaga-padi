@@ -6,6 +6,18 @@ Append-only. Newest entries at the top. Updated whenever a backend task is creat
 
 ---
 
+### 2026-07-29 · [Sprint 03 — photo-quality](../sprint/active/03-photo-quality/sprint.md) · Task: [01 — Upload Endpoint + Quality Gate](../sprint/active/03-photo-quality/backend/01-upload-quality-gate.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/router/photos.py`, `apps/backend/service/photos.py`, `apps/backend/service/quality_gate.py`, `apps/backend/service/siaga_case_support.py`, `apps/backend/service/cases.py`, `apps/backend/api.py`, `apps/backend/requirements.txt`, `apps/backend/tests/test_photos.py`, `apps/backend/tests/conftest.py`, `apps/web/docs/api-spec-photo.md`
+> Unggah multipart + gerbang kualitas deterministik (ketajaman Laplacian, luma, resolusi, cakupan hijau) → status layak/ditolak/ambang/tidak_pasti dengan maks 3 alasan sederhana; skor mentah hanya di log server. Dedup sha256 per kasus (replay tanpa duplikat), EXIF+GPS dihapus sebelum simpan, ≥2 foto diterima → DRAFT→CAPTURED via tabel transisi legal, 3× gagal per slot → escalate `needs_human_review`. 138 pytest hijau; verifikasi live: signed URL 200, akses publik/anonim 400.
+
+### 2026-07-29 · [Sprint 03 — photo-quality](../sprint/active/03-photo-quality/sprint.md) · Task: [00 — Schema Photos](../sprint/active/03-photo-quality/backend/00-schema-photos.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/supabase/migrations/0011_case_photos.sql`, `apps/backend/models/siaga_photo.py`, `apps/backend/dto/siaga_photo.py`, `apps/backend/config/base.py`
+> Migration 0011 diterapkan live: tabel `case_photos` (status kualitas, alasan ≤3, retake, fingerprint unik per kasus, versi config, exif_stripped, never_for_training) + kolom escalation `needs_human_review` di `cases` + bucket privat `case-photos` (signed URL saja) + RLS mengikuti visibilitas kasus. Verifikasi live: duplicate fingerprint ditolak (23505), bucket non-publik. Catatan infra: mount storage diganti named volume (bind mount macOS tanpa xattr membuat supabase-storage 500).
+
 ### 2026-07-26 · [Sprint 02 — case-management](../sprint/archive/02-case-management/sprint.md) · Task: [00 — Schema Case](../sprint/archive/02-case-management/backend/00-schema-case.md) · ✅ Done
 
 **Event:** Task completed

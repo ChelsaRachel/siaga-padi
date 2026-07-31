@@ -346,6 +346,46 @@ class FakeCaseRepo:
         return dict(rows[-1]) if rows else None
 
 
+class FakePhotoRepo(FakeCaseRepo):
+    """In-memory implementation of the photo repo seam (Sprint 03) —
+    extends the case fake with photo rows and a dict-backed object store."""
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.photos: dict[str, dict] = {}
+        self.storage: dict[str, bytes] = {}
+
+    def update_case(self, case_id: str, fields: dict) -> dict:
+        self.cases[case_id] = {**self.cases[case_id], **fields}
+        return dict(self.cases[case_id])
+
+    def list_photos(self, case_id: str) -> list[dict]:
+        rows = [dict(p) for p in self.photos.values() if p["case_id"] == case_id]
+        return sorted(rows, key=lambda r: r["created_at"])
+
+    def get_photo_by_fingerprint(self, case_id: str, fingerprint: str):
+        return next(
+            (
+                dict(p)
+                for p in self.photos.values()
+                if p["case_id"] == case_id and p["fingerprint"] == fingerprint
+            ),
+            None,
+        )
+
+    def insert_photo(self, row: dict) -> dict:
+        if self.get_photo_by_fingerprint(row["case_id"], row["fingerprint"]):
+            raise Exception("unique violation: case_photos(case_id, fingerprint)")
+        self.photos[row["id"]] = dict(row)
+        return row
+
+    def upload_object(self, path: str, data: bytes, content_type: str) -> None:
+        self.storage[path] = data
+
+    def create_signed_url(self, path: str, expires_in: int) -> str:
+        return f"https://fake.signed/{path}?exp={expires_in}"
+
+
 def seed_case(
     repo: FakeCaseRepo,
     case_id: str,
@@ -412,6 +452,7 @@ def app() -> FastAPI:
     from router import assisted as assisted_router
     from router import cases as cases_router
     from router import farmer_profile as farmer_profile_router
+    from router import photos as photos_router
     from router import siaga_auth as siaga_auth_router
     from util.siaga_response import register_siaga_exception_handlers
 
@@ -420,6 +461,7 @@ def app() -> FastAPI:
     test_app.include_router(assisted_router.router)
     test_app.include_router(cases_router.router)
     test_app.include_router(farmer_profile_router.router)
+    test_app.include_router(photos_router.router)
     # Same handler api.py registers — guard rejections render the top-level envelope.
     register_siaga_exception_handlers(test_app)
     return test_app
@@ -577,4 +619,33 @@ def case_repo(monkeypatch) -> FakeCaseRepo:
     monkeypatch.setattr(
         farmer_profile_router, "obj", FarmerProfileService(repo=repo)
     )
+    return repo
+
+
+@pytest.fixture()
+def photo_repo(monkeypatch) -> FakePhotoRepo:
+    """Wire the photos router to an in-memory fake sharing the Sprint 02
+    world (Ani petani + penyuluh Dewi + admin + assisted subject)."""
+    from router import photos as photos_router
+    from service.photos import PhotoService
+
+    repo = FakePhotoRepo(
+        profiles=[
+            make_profile(
+                PETANI_PROFILE_ID, PETANI_USER_ID, "petani", "Ani Petani",
+                kecamatan="Ciparay",
+            ),
+            make_profile(
+                OTHER_PETANI_PROFILE_ID, OTHER_PETANI_USER_ID, "petani",
+                "Budi Tani", kecamatan="Soreang",
+            ),
+            make_profile(
+                PENYULUH_PROFILE_ID, PENYULUH_USER_ID, "penyuluh",
+                "Dewi Penyuluh",
+            ),
+            make_profile(ADMIN_PROFILE_ID, ADMIN_USER_ID, "admin", "Sari Admin"),
+        ],
+        assignments={PENYULUH_USER_ID: PENYULUH_AREAS},
+    )
+    monkeypatch.setattr(photos_router, "obj", PhotoService(repo=repo))
     return repo

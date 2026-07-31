@@ -88,7 +88,7 @@ const mainRoutes: RouteObject[] = [
         ),
       },
       {
-        // Photo-flow placeholder — real flow lands in Sprint 03.
+        // Sprint 03 photo flow: guided camera → quality gate → retake/escalate.
         path: 'kasus/:caseId/foto',
         element: (
           <RoleGuard allowedRoles={CASE_ROUTE_ROLES}>

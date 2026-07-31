@@ -1,9 +1,9 @@
 # Sprint 03 — Photo & Quality
 
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Created At:** 2026-07-25
-**Started At:** -
-**Completed At:** -
+**Started At:** 2026-07-29
+**Completed At:** 2026-07-29
 
 ## Goal
 
@@ -47,7 +47,7 @@ backend/00-schema-photos.md (foundation)
 
 ## Outcome
 
-(Filled in on archive.)
+Semua 5 task selesai pada 2026-07-29. Backend: migration 0011 (`case_photos` + bucket privat `case-photos` + flag `needs_human_review` di `cases`) diterapkan live; endpoint unggah multipart dengan gerbang kualitas deterministik (ketajaman/luma/resolusi/cakupan hijau → layak/ditolak/ambang/tidak_pasti, maks 3 alasan sederhana, skor mentah hanya log server), dedup sha256 per kasus, EXIF+GPS dihapus sebelum simpan, ≥2 foto diterima → DRAFT→CAPTURED, escalate 3×-gagal → `needs_human_review`; 138 pytest hijau + verifikasi live signed-URL/akses-publik. Frontend: alur foto lengkap (contoh baik/buruk → kamera bingkai panduan dengan fallback galeri → pratinjau → unggah berprogres dengan badge menunggu-jaringan & retry ber-fingerprint → kartu kualitas + tips foto ulang per alasan → "Kirim ke Penyuluh Saja" → auto-lanjut saat 2 foto diterima); 177 vitest hijau, tsc bersih, build staging hijau. Catatan infra: mount supabase-storage diganti named volume (bind mount macOS tanpa xattr → 500).
 
 ---
 

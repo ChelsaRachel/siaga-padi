@@ -2,7 +2,7 @@
  * API Endpoint Constants
  * Centralized paths for all backend services.
  */
-const SUFFIX_BASE = 'apps';
+const SUFFIX_BASE = 'apps'
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: `${SUFFIX_BASE}/auth/login`,
@@ -31,6 +31,12 @@ export const API_ENDPOINTS = {
     DETAIL: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}`,
     TIMELINE: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/timeline`,
   },
+  // Siaga Padi Sprint 03 contract — docs/api-spec-photo.md
+  PHOTOS: {
+    UPLOAD: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/photos`,
+    LIST: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/photos`,
+    ESCALATE: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/photos/escalate`,
+  },
   FARMER_PROFILE: {
     UPDATE: `${SUFFIX_BASE}/farmer/profile`,
     FIELDS: `${SUFFIX_BASE}/farmer/profile/fields`,
@@ -47,6 +53,6 @@ export const API_ENDPOINTS = {
     TRANSACTIONS: `${SUFFIX_BASE}/finance/transactions`,
     REPORTS: `${SUFFIX_BASE}/finance/reports`,
   },
-} as const;
+} as const
 
-export type ApiEndpoints = typeof API_ENDPOINTS;
+export type ApiEndpoints = typeof API_ENDPOINTS

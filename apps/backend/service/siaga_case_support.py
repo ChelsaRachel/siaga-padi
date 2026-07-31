@@ -17,6 +17,11 @@ from exceptions.siaga_exceptions import (
     SiagaValidationError,
     UnauthorizedError,
 )
+from models.siaga_profile import (
+    ROLE_ADMIN,
+    ROLE_DOMAIN_REVIEWER,
+    ROLE_PENYULUH,
+)
 from service import BaseSupabaseRepository
 
 FIELD_NAME_MIN_LENGTH = 2
@@ -95,6 +100,28 @@ def resolve_actor_context(
     if subject is None:
         raise SiagaForbiddenError(ASSISTED_SESSION_INVALID_MESSAGE)
     return subject, caller_profile
+
+
+def is_case_visible(repo, row: dict, caller: dict) -> bool:
+    """Shared read-visibility rule for a case row (cases + photos services).
+
+    Owner always sees their case; admin/reviewer see all; penyuluh see cases
+    whose area (or whose field's area) is inside their binaan kecamatan.
+    """
+    role = caller["role"]
+    if row["owner_profile_id"] == caller["id"]:
+        return True
+    if role in (ROLE_ADMIN, ROLE_DOMAIN_REVIEWER):
+        return True
+    if role != ROLE_PENYULUH:
+        return False
+    areas = repo.get_assignment_areas(caller["user_id"])
+    if row.get("area_kecamatan") in areas:
+        return True
+    if not row.get("field_id"):
+        return False
+    field = repo.get_field_by_id(row["field_id"]) or {}
+    return field.get("area_kecamatan") in areas
 
 
 def validate_field_name(name: Optional[str]) -> str:
