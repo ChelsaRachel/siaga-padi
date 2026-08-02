@@ -50,6 +50,13 @@ interface PhotoFlowStore {
   caseDisplayStage: string
   isEscalating: boolean
   escalateError: string | null
+  /**
+   * True only when an upload/escalate IN THIS SESSION finished the flow.
+   * Hydration never sets it: reopening a case that already has enough photos
+   * (resume, or a penyuluh's "perlu foto ulang") must not bounce the user out
+   * before they get a chance to retake.
+   */
+  hasJustCompleted: boolean
 
   setStep: (step: TPhotoFlowStep) => void
   /** Camera shutter / gallery pick → preview step. */
@@ -102,6 +109,7 @@ const INITIAL_STATE = {
   caseDisplayStage: 'draf',
   isEscalating: false,
   escalateError: null,
+  hasJustCompleted: false,
 }
 
 const isAccepted = (photo: SiagaCasePhoto | null): boolean => photo?.qualityStatus === 'layak' || photo?.qualityStatus === 'ambang'
@@ -190,6 +198,8 @@ export const usePhotoFlowStore = create<PhotoFlowStore>((set, get) => ({
         canEscalate: result.canEscalate,
         caseStatus: result.caseStatus,
         caseDisplayStage: result.caseDisplayStage,
+        // Armed by a LIVE verdict only — see `hasJustCompleted`.
+        hasJustCompleted: selectShouldAutoContinue(result.acceptedCount),
       })
     } catch (uploadError: unknown) {
       // Connection loss keeps the photo on-device, visibly pending
@@ -216,11 +226,14 @@ export const usePhotoFlowStore = create<PhotoFlowStore>((set, get) => ({
     set({ isEscalating: true, escalateError: null })
     try {
       const response = await photosService.escalate(caseId)
+      const needsHumanReview = response?.data?.needsHumanReview ?? true
       set({
-        needsHumanReview: response?.data?.needsHumanReview ?? true,
+        needsHumanReview,
         caseStatus: response?.data?.caseStatus ?? get().caseStatus,
         caseDisplayStage: response?.data?.caseDisplayStage ?? get().caseDisplayStage,
         canEscalate: false,
+        // Handing the case to a penyuluh ends the photo flow too.
+        hasJustCompleted: needsHumanReview,
       })
       return true
     } catch (escalateError: unknown) {
@@ -249,13 +262,20 @@ export const usePhotoFlowStore = create<PhotoFlowStore>((set, get) => ({
             result: photo,
           }
         }
+        // Resuming a case that already has attempts: show the previous
+        // verdicts (and the escalate option) instead of restarting at the
+        // examples, and point the flow at the slot still missing a photo.
+        const hasPreviousAttempts = data.photos.length > 0
         return {
           slots,
+          step: hasPreviousAttempts ? 'hasil' : state.step,
+          activeSlot: hasPreviousAttempts ? (selectNextSlot(slots) ?? state.activeSlot) : state.activeSlot,
           acceptedCount: data.acceptedCount,
           canEscalate: data.canEscalate,
           needsHumanReview: data.needsHumanReview,
           caseStatus: data.caseStatus,
           caseDisplayStage: data.caseDisplayStage,
+          // NOTE: `hasJustCompleted` is deliberately NOT set here.
         }
       })
     } catch {
