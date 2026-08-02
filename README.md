@@ -59,12 +59,43 @@ untuk detach tanpa mematikan). Menjalankan tiap layer terpisah tetap bisa:
 
 ```bash
 cd apps/web && npm run dev                   # web saja
-cd apps/backend && venv/bin/python api.py    # backend saja
+cd apps/backend && .venv/bin/python api.py   # backend saja
 sh .supabase/docker/run.sh start             # Supabase saja
 ```
 
 > **Catatan:** stack ini hanya hidup selama MacBook menyala. Untuk akses 24/7
 > (uji lapangan, demo klien) diperlukan deployment ke VPS atau PaaS.
+
+### Menguji dari HP (HTTPS)
+
+Membuka dev server lewat IP LAN (`http://192.168.x.x:3000`) memakai HTTP biasa,
+yang bukan *secure context*. Di origin seperti itu browser tidak mengekspos
+`navigator.serviceWorker`, sehingga aplikasi menampilkan banner merah
+**"Penyimpanan offline tidak tersedia"**. Jalankan dev server lewat TLS untuk
+menghilangkannya:
+
+```bash
+WEB_HTTPS=true ./scripts/dev.sh up     # seluruh stack, web lewat HTTPS
+
+# atau web saja:
+cd apps/web
+npm run dev:cert                       # sekali saja — buat sertifikat lokal
+npm run dev:https
+```
+
+`dev:cert` memakai **mkcert** bila tersedia (tanpa peringatan di mesin ini), dan
+jatuh ke **openssl** bila tidak. Sertifikat mencakup `localhost` plus semua IP
+LAN mesin, tersimpan di `apps/web/certs/` dan **tidak** ikut ter-commit.
+
+Dengan sertifikat self-signed, HP menampilkan peringatan sekali — pilih
+**Advanced → Proceed**. Setelah itu origin dihitung sebagai secure context dan
+banner merah hilang.
+
+> Banner hilang karena API service worker sudah tersedia. Antrean draft offline
+> sendiri tetap tidak aktif di mode dev: registrasi service worker memang
+> di-skip saat `NODE_ENV !== 'production'`
+> ([`pwa.service.ts`](apps/web/src/services/pwa.service.ts)). Untuk menguji
+> perilaku offline sungguhan, jalankan build produksi di belakang HTTPS.
 
 ## Dokumentasi
 

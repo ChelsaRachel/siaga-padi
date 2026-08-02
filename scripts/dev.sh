@@ -22,6 +22,8 @@
 #
 # Overridable via environment:
 #   WEB_PORT=3001 ./scripts/dev.sh up
+#   WEB_HTTPS=true ./scripts/dev.sh up   # serve web over TLS so the PWA can be
+#                                        # opened from a phone on the same LAN
 #
 set -euo pipefail
 
@@ -32,6 +34,7 @@ readonly SUPABASE_RUN="${ROOT}/.supabase/docker/run.sh"
 readonly BACKEND_DIR="${ROOT}/apps/backend"
 readonly WEB_DIR="${ROOT}/apps/web"
 readonly WEB_PORT="${WEB_PORT:-3000}"
+readonly WEB_HTTPS="${WEB_HTTPS:-false}"
 
 log() { printf '\033[0;36m▸ %s\033[0m\n' "$*"; }
 ok()  { printf '\033[0;32m✓ %s\033[0m\n' "$*"; }
@@ -57,17 +60,19 @@ require_docker_daemon() {
   fi
 }
 
-# The backend boilerplate has shipped both `venv/` and `.venv/` at different
-# points; use whichever one actually has the dependencies installed.
+# The backend virtualenv is standardised on `.venv/` — one name only, so a stray
+# second environment can never silently shadow the one dependencies land in.
 resolve_backend_python() {
-  local candidate
-  for candidate in "${BACKEND_DIR}/venv/bin/python" "${BACKEND_DIR}/.venv/bin/python"; do
-    if [ -x "$candidate" ] && "$candidate" -c "import fastapi" >/dev/null 2>&1; then
-      printf '%s' "$candidate"
-      return 0
-    fi
-  done
-  die "Tidak ada virtualenv backend yang punya FastAPI. Jalankan: cd apps/backend && python3 -m venv venv && venv/bin/pip install -r requirements.txt"
+  local candidate="${BACKEND_DIR}/.venv/bin/python"
+
+  if [ -x "$candidate" ] && "$candidate" -c "import fastapi" >/dev/null 2>&1; then
+    printf '%s' "$candidate"
+    return 0
+  fi
+
+  die "Virtualenv backend '.venv' belum siap. Buat dulu:
+  cd apps/backend && uv venv .venv && uv pip install -r requirements.txt --python .venv/bin/python
+  (tanpa uv: cd apps/backend && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt)"
 }
 
 # --- infrastructure ----------------------------------------------------------
@@ -94,6 +99,20 @@ stop_containers() {
 
 # --- application dev servers -------------------------------------------------
 
+# Service workers only exist on a secure context, so reaching the dev server by
+# LAN IP (what a phone does) needs TLS. Generate the cert on first HTTPS run.
+ensure_web_cert() {
+  [ "$WEB_HTTPS" = "true" ] || return 0
+
+  if [ -f "${WEB_DIR}/certs/dev-key.pem" ] && [ -f "${WEB_DIR}/certs/dev-cert.pem" ]; then
+    return 0
+  fi
+
+  log "Sertifikat dev belum ada — membuatnya..."
+  (cd "$WEB_DIR" && npm run --silent dev:cert) \
+    || die "Gagal membuat sertifikat dev. Jalankan manual: cd apps/web && npm run dev:cert"
+}
+
 start_apps() {
   if tmux has-session -t "$SESSION" 2>/dev/null; then
     warn "Session tmux '${SESSION}' sudah jalan — dev server tidak di-start ulang"
@@ -107,9 +126,11 @@ start_apps() {
   tmux new-session -d -s "$SESSION" -n backend -c "$BACKEND_DIR" \
     "'${backend_python}' api.py; echo; echo '[backend berhenti — tekan enter untuk menutup]'; read"
 
+  ensure_web_cert
+
   log "Menjalankan web dev server di tmux..."
   tmux new-window -t "$SESSION" -n web -c "$WEB_DIR" \
-    "PORT='${WEB_PORT}' npm run dev; echo; echo '[web berhenti — tekan enter untuk menutup]'; read"
+    "PORT='${WEB_PORT}' DEV_HTTPS='${WEB_HTTPS}' npm run dev; echo; echo '[web berhenti — tekan enter untuk menutup]'; read"
 
   ok "Dev server jalan di tmux session '${SESSION}'"
 }
@@ -137,10 +158,20 @@ attach_session() {
 }
 
 print_urls() {
+  local web_scheme="http"
+  [ "$WEB_HTTPS" = "true" ] && web_scheme="https"
+
   printf '\n'
-  ok "Web        http://localhost:${WEB_PORT}"
+  ok "Web        ${web_scheme}://localhost:${WEB_PORT}"
   ok "Backend    http://localhost:8020/docs"
   ok "Supabase   http://localhost:8000"
+
+  if [ "$WEB_HTTPS" = "true" ]; then
+    local lan_ip
+    lan_ip="$(ipconfig getifaddr en0 2>/dev/null || true)"
+    [ -n "$lan_ip" ] && ok "Dari HP    https://${lan_ip}:${WEB_PORT}  (sertifikat self-signed → pilih 'Lanjutkan')"
+  fi
+
   printf '\n'
   printf '  tmux attach -t %s     # lihat log backend/web\n' "$SESSION"
   printf '  Ctrl-b n / Ctrl-b p    # pindah window\n'
