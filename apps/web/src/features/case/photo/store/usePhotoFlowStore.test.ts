@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import type { PhotoUploadResult, SiagaCasePhoto } from '@/types/siaga-photo'
+import type { CasePhotoListResult, PhotoUploadResult, SiagaCasePhoto } from '@/types/siaga-photo'
 import { photosService } from '@/services/photos.service'
 import { buildCounterLabel, selectNextSlot, selectShouldAutoContinue, usePhotoFlowStore } from './usePhotoFlowStore'
 
@@ -13,6 +13,7 @@ vi.mock('@/services/photos.service', () => ({
 
 const mockedUpload = vi.mocked(photosService.upload)
 const mockedEscalate = vi.mocked(photosService.escalate)
+const mockedGetAll = vi.mocked(photosService.getAll)
 
 function makePhoto(overrides: Partial<SiagaCasePhoto> = {}): SiagaCasePhoto {
   return {
@@ -26,6 +27,20 @@ function makePhoto(overrides: Partial<SiagaCasePhoto> = {}): SiagaCasePhoto {
     signedUrl: 'https://signed.example/p.jpg',
     createdAt: '2026-07-29T00:00:00Z',
     ...overrides,
+  }
+}
+
+function makeListResult(overrides: Partial<CasePhotoListResult> = {}): { data: CasePhotoListResult } {
+  return {
+    data: {
+      photos: [],
+      acceptedCount: 0,
+      canEscalate: false,
+      needsHumanReview: false,
+      caseStatus: 'DRAFT',
+      caseDisplayStage: 'draf',
+      ...overrides,
+    },
   }
 }
 
@@ -163,5 +178,92 @@ describe('usePhotoFlowStore — counter, auto-continue, escalation', () => {
     expect(state.needsHumanReview).toBe(true)
     expect(state.canEscalate).toBe(false)
     expect(state.caseStatus).toBe('CAPTURED')
+  })
+})
+
+describe('usePhotoFlowStore — resuming an existing case', () => {
+  test('a live upload reaching the minimum arms auto-continue', async () => {
+    // Arrange
+    mockedUpload.mockResolvedValue(makeUploadResult({ acceptedCount: 2 }) as never)
+
+    // Act
+    await captureAndConfirm()
+
+    // Assert
+    expect(usePhotoFlowStore.getState().hasJustCompleted).toBe(true)
+  })
+
+  test('escalating arms auto-continue', async () => {
+    mockedEscalate.mockResolvedValue({
+      data: { caseId: 'case-1', needsHumanReview: true, caseStatus: 'CAPTURED', caseDisplayStage: 'difoto' },
+    } as never)
+
+    await usePhotoFlowStore.getState().escalate('case-1')
+
+    expect(usePhotoFlowStore.getState().hasJustCompleted).toBe(true)
+  })
+
+  test('hydrating an already-complete case never arms auto-continue', async () => {
+    // Arrange — a case that already passed the gate, reopened for a retake.
+    mockedGetAll.mockResolvedValue(
+      makeListResult({
+        photos: [makePhoto({ slotNo: 1 }), makePhoto({ photoId: 'photo-2', slotNo: 2 })],
+        acceptedCount: 2,
+        caseStatus: 'CAPTURED',
+        caseDisplayStage: 'difoto',
+      }) as never,
+    )
+
+    // Act
+    await usePhotoFlowStore.getState().syncFromServer('case-1')
+
+    // Assert — server truth lands, but the user is NOT bounced out.
+    const state = usePhotoFlowStore.getState()
+    expect(state.acceptedCount).toBe(2)
+    expect(state.hasJustCompleted).toBe(false)
+  })
+
+  test('hydrating an escalated case never arms auto-continue', async () => {
+    mockedGetAll.mockResolvedValue(
+      makeListResult({
+        photos: [makePhoto({ slotNo: 1, qualityStatus: 'ditolak', rejectReasons: ['buram'] })],
+        needsHumanReview: true,
+        caseStatus: 'CAPTURED',
+        caseDisplayStage: 'difoto',
+      }) as never,
+    )
+
+    await usePhotoFlowStore.getState().syncFromServer('case-1')
+
+    const state = usePhotoFlowStore.getState()
+    expect(state.needsHumanReview).toBe(true)
+    expect(state.hasJustCompleted).toBe(false)
+  })
+
+  test('resuming opens the result step on the slot that still needs a photo', async () => {
+    // Arrange — slot 1 accepted, slot 2 rejected: the retake belongs to slot 2.
+    mockedGetAll.mockResolvedValue(
+      makeListResult({
+        photos: [makePhoto({ slotNo: 1 }), makePhoto({ photoId: 'photo-2', slotNo: 2, qualityStatus: 'ditolak', rejectReasons: ['gelap'] })],
+        acceptedCount: 1,
+      }) as never,
+    )
+
+    // Act
+    await usePhotoFlowStore.getState().syncFromServer('case-1')
+
+    // Assert
+    const state = usePhotoFlowStore.getState()
+    expect(state.step).toBe('hasil')
+    expect(state.activeSlot).toBe(2)
+    expect(state.slots[1].uploadState).toBe('terkirim')
+  })
+
+  test('a case with no photos yet still starts at the examples step', async () => {
+    mockedGetAll.mockResolvedValue(makeListResult() as never)
+
+    await usePhotoFlowStore.getState().syncFromServer('case-1')
+
+    expect(usePhotoFlowStore.getState().step).toBe('intro')
   })
 })

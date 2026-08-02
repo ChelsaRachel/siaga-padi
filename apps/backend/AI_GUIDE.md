@@ -80,10 +80,11 @@ Production-ready Python FastAPI backend shell that acts as the **thin glue layer
 ## Build & Run Commands
 
 ```bash
-# 1. Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate          # Linux / macOS
-# venv\Scripts\activate           # Windows
+# 1. Create and activate virtual environment (nama wajib `.venv` — satu-satunya
+#    yang dikenali scripts/dev.sh)
+python -m venv .venv
+source .venv/bin/activate         # Linux / macOS
+# .venv\Scripts\activate          # Windows
 
 # 2. Install dependencies
 pip install -r requirements.txt

@@ -3,9 +3,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CaseTimeline, StagedProgress } from '@/features/case/history'
+import { isPhotoPending, isPhotoRetake } from '@/features/case/photo'
 import type { DisplayStage } from '@/types/siaga-case'
 import { CaseDetailHeader } from './parts/CaseDetailHeader'
 import { ResultPlaceholderCard } from './parts/ResultPlaceholderCard'
+import { ResumePhotoCard } from './parts/ResumePhotoCard'
 import { useCaseDetail } from './hooks/useCaseDetail'
 
 /** Staged progress shows while the case is still being photographed/processed. */
@@ -49,9 +51,9 @@ function CaseDetailPage() {
         <>
           <CaseDetailHeader caseData={caseData} onRefresh={refresh} isRefreshing={isLoading} />
 
-          {PROGRESS_VISIBLE_STAGES.includes(caseData.displayStage) && (
-            <StagedProgress status={caseData.status} />
-          )}
+          {isPhotoPending(caseData.status) && <ResumePhotoCard caseId={caseData.caseId} isRetake={isPhotoRetake(caseData.status)} />}
+
+          {PROGRESS_VISIBLE_STAGES.includes(caseData.displayStage) && <StagedProgress status={caseData.status} />}
 
           <ResultPlaceholderCard />
 

@@ -15,3 +15,4 @@ export {
   PHOTO_SLOTS,
 } from './store/usePhotoFlowStore'
 export type { IPhotoSlot, TPhotoFlowStep, TUploadState } from './store/usePhotoFlowStore'
+export { isPhotoPending, isPhotoRetake, PHOTO_PENDING_STATUSES } from './photo-status-rules'

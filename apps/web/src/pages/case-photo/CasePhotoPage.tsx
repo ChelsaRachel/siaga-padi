@@ -23,8 +23,7 @@ interface PhotoRouteState {
   reviewerNote?: string
 }
 
-const DUPLICATE_NOTICE =
-  'Foto yang sama sudah terkirim untuk kasus ini — silakan ambil foto lain.'
+const DUPLICATE_NOTICE = 'Foto yang sama sudah terkirim untuk kasus ini — silakan ambil foto lain.'
 
 /**
  * Alur foto Sprint 03 (FR-003/FR-004): contoh baik/buruk → kamera terpandu
@@ -47,7 +46,7 @@ function CasePhotoPage() {
   const pendingCapture = usePhotoFlowStore((state) => state.pendingCapture)
   const acceptedCount = usePhotoFlowStore((state) => state.acceptedCount)
   const canEscalate = usePhotoFlowStore((state) => state.canEscalate)
-  const needsHumanReview = usePhotoFlowStore((state) => state.needsHumanReview)
+  const hasJustCompleted = usePhotoFlowStore((state) => state.hasJustCompleted)
   const isEscalating = usePhotoFlowStore((state) => state.isEscalating)
   const escalateError = usePhotoFlowStore((state) => state.escalateError)
 
@@ -92,15 +91,20 @@ function CasePhotoPage() {
     return () => window.removeEventListener('online', handleOnline)
   }, [caseId])
 
-  /* FR-003 auto-continue: 2 accepted photos → analysis route (detail page). */
+  /*
+   * FR-003 auto-continue: 2 accepted photos (or an escalation) → analysis
+   * route. Driven by `hasJustCompleted`, which only a LIVE upload/escalate
+   * sets — hydrating an already-complete case must leave the user on this
+   * page so a retake stays possible.
+   */
   useEffect(() => {
-    if (caseId && (selectShouldAutoContinue(acceptedCount) || needsHumanReview)) {
+    if (caseId && hasJustCompleted) {
       navigate(`/kasus/${caseId}`, {
         replace: true,
         state: { fromPhotoFlow: true },
       })
     }
-  }, [acceptedCount, needsHumanReview, caseId, navigate])
+  }, [hasJustCompleted, caseId, navigate])
 
   const handleUsePhoto = useCallback(async () => {
     if (!caseId) {
@@ -124,17 +128,10 @@ function CasePhotoPage() {
   }
 
   const activeResult = slots[activeSlot].result
-  const retakeReasons =
-    activeResult && activeResult.qualityStatus !== 'layak'
-      ? activeResult.rejectReasons
-      : []
+  const retakeReasons = activeResult && activeResult.qualityStatus !== 'layak' ? activeResult.rejectReasons : []
   const counterLabel = buildCounterLabel(acceptedCount)
-  const visibleSlots = PHOTO_SLOTS.filter(
-    (slotNo) => slots[slotNo].uploadState !== 'idle'
-  )
-  const lastRejected =
-    activeResult &&
-    ['ditolak', 'tidak_pasti'].includes(activeResult.qualityStatus)
+  const visibleSlots = PHOTO_SLOTS.filter((slotNo) => slots[slotNo].uploadState !== 'idle')
+  const lastRejected = activeResult && ['ditolak', 'tidak_pasti'].includes(activeResult.qualityStatus)
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
@@ -156,29 +153,19 @@ function CasePhotoPage() {
         </Alert>
       )}
 
-      {step === 'intro' && (
-        <PhotoExamples
-          onStart={() => usePhotoFlowStore.getState().setStep('camera')}
-        />
-      )}
+      {step === 'intro' && <PhotoExamples onStart={() => usePhotoFlowStore.getState().setStep('camera')} />}
 
       {step === 'camera' && (
         <CameraCapture
           counterLabel={counterLabel}
           retakeReasons={retakeReasons}
           reviewerNote={routeState?.reviewerNote ?? null}
-          onCapture={(blob, previewUrl) =>
-            usePhotoFlowStore.getState().capture(blob, previewUrl)
-          }
+          onCapture={(blob, previewUrl) => usePhotoFlowStore.getState().capture(blob, previewUrl)}
         />
       )}
 
       {step === 'preview' && pendingCapture && (
-        <PhotoPreview
-          previewUrl={pendingCapture.previewUrl}
-          onRetake={() => usePhotoFlowStore.getState().discardCapture()}
-          onUse={handleUsePhoto}
-        />
+        <PhotoPreview previewUrl={pendingCapture.previewUrl} onRetake={() => usePhotoFlowStore.getState().discardCapture()} onUse={handleUsePhoto} />
       )}
 
       {step === 'hasil' && (
@@ -187,44 +174,27 @@ function CasePhotoPage() {
             const slot = slots[slotNo]
             return (
               <div key={slotNo} className="flex flex-col gap-3">
-                <UploadProgressCard
-                  slot={slot}
-                  onRetry={() =>
-                    usePhotoFlowStore.getState().retryUpload(caseId, slotNo)
-                  }
-                />
+                <UploadProgressCard slot={slot} onRetry={() => usePhotoFlowStore.getState().retryUpload(caseId, slotNo)} />
                 {slot.result && <QualityResultCard photo={slot.result} />}
               </div>
             )
           })}
 
-          {lastRejected && (
-            <RetakeTipsPanel
-              reasons={retakeReasons}
-              onRetake={() => usePhotoFlowStore.getState().goToRetake(activeSlot)}
-            />
+          {lastRejected && <RetakeTipsPanel reasons={retakeReasons} onRetake={() => usePhotoFlowStore.getState().goToRetake(activeSlot)} />}
+
+          {!lastRejected && acceptedCount > 0 && !selectShouldAutoContinue(acceptedCount) && (
+            <button
+              type="button"
+              data-testid="next-photo-button"
+              onClick={() => usePhotoFlowStore.getState().setStep('camera')}
+              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-base px-5 py-3 text-body-md font-semibold text-font-on-accent transition-colors hover:bg-primary-bold"
+            >
+              <i className="ph ph-camera" aria-hidden="true" />
+              Ambil Foto Berikutnya
+            </button>
           )}
 
-          {!lastRejected &&
-            acceptedCount > 0 &&
-            !selectShouldAutoContinue(acceptedCount) && (
-              <button
-                type="button"
-                data-testid="next-photo-button"
-                onClick={() => usePhotoFlowStore.getState().setStep('camera')}
-                className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-base px-5 py-3 text-body-md font-semibold text-font-on-accent transition-colors hover:bg-primary-bold"
-              >
-                <i className="ph ph-camera" aria-hidden="true" />
-                Ambil Foto Berikutnya
-              </button>
-            )}
-
-          <EscalateSection
-            isVisible={canEscalate}
-            isEscalating={isEscalating}
-            error={escalateError}
-            onConfirm={handleEscalate}
-          />
+          <EscalateSection isVisible={canEscalate} isEscalating={isEscalating} error={escalateError} onConfirm={handleEscalate} />
         </div>
       )}
     </div>

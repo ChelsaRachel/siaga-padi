@@ -6,6 +6,12 @@ Append-only. Newest entries at the top. Updated whenever a frontend task is crea
 
 ---
 
+### 2026-08-03 · [Sprint 03 — photo-quality](../sprint/archive/03-photo-quality/sprint.md) · Audit follow-up · ✅ Done
+
+**Event:** Post-sprint fix (audit temuan #1 & #2)
+**Files:** `apps/web/src/pages/case-detail/parts/ResumePhotoCard.tsx`, `apps/web/src/pages/case-detail/CaseDetailPage.tsx`, `apps/web/src/pages/case-detail/CaseDetailPage.test.tsx`, `apps/web/src/features/case/photo/photo-status-rules.ts`, `apps/web/src/features/case/photo/store/usePhotoFlowStore.ts`, `apps/web/src/features/case/photo/store/usePhotoFlowStore.test.ts`, `apps/web/src/features/case/photo/index.ts`, `apps/web/src/pages/case-photo/CasePhotoPage.tsx`
+> Audit Sprint 03 menemukan alur foto hanya punya satu pintu masuk (tepat setelah kasus dibuat), sehingga kasus yang ditinggal di tengah pengambilan foto tidak bisa dilanjutkan. Ditambahkan `ResumePhotoCard` di detail kasus untuk status yang masih menunggu foto (`DRAFT`/`QUALITY_REJECTED`/`REVISION_REQUIRED` — cermin `ADVANCE_FROM_STATUSES` backend) dengan copy "Lanjutkan Foto" vs "Foto Ulang". Auto-lanjut kini dikendalikan flag `hasJustCompleted` yang hanya diset oleh unggah/escalate di sesi berjalan — hidrasi tidak pernah memicunya, jadi membuka ulang kasus yang sudah lengkap tidak lagi melempar pengguna keluar sebelum sempat foto ulang (menutup jebakan untuk jalur "perlu foto ulang" Sprint 06). `syncFromServer` juga melanjutkan ke langkah hasil pada slot yang masih kosong, sehingga verdict sebelumnya dan opsi escalate langsung terlihat. 187 vitest hijau (+10), tsc bersih, build staging hijau.
+
 ### 2026-07-29 · [Sprint 03 — photo-quality](../sprint/archive/03-photo-quality/sprint.md) · Task: [03 — Kartu Hasil Kualitas & Panduan Foto Ulang](../sprint/archive/03-photo-quality/frontend/03-quality-feedback.md) · ✅ Done
 
 **Event:** Task completed

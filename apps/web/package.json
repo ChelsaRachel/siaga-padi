@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "cross-env NODE_ENV=development rspack serve --config rspack.dev.ts",
+    "dev:cert": "node scripts/generate-dev-cert.mjs",
+    "dev:https": "cross-env NODE_ENV=development DEV_HTTPS=true rspack serve --config rspack.dev.ts",
     "start": "cross-env NODE_ENV=development rspack serve --config rspack.dev.ts",
     "start:prod": "node ./server.js",
     "build:pwa": "cross-env NODE_ENV=production rspack build --config rspack.sw.ts && node scripts/inject-service-worker.mjs",
