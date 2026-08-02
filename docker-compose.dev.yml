@@ -1,0 +1,33 @@
+# Local development infrastructure for Siaga Padi.
+#
+# Covers the supporting services that are NOT part of the self-hosted Supabase
+# stack (that one lives in .supabase/docker/docker-compose.yml and is managed
+# by .supabase/docker/run.sh).
+#
+# Usage — prefer scripts/dev.sh, which starts this together with Supabase:
+#   docker compose -f docker-compose.dev.yml up -d --wait
+#   docker compose -f docker-compose.dev.yml down
+name: siaga-padi-dev
+
+services:
+  redis:
+    image: redis:7
+    container_name: siaga-padi-redis
+    # Survives a Docker Desktop restart without manual intervention.
+    restart: unless-stopped
+    ports:
+      # Matches REDIS_PORT in apps/backend/.env
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  # Named (not anonymous) so the data directory is identifiable and survives
+  # a `docker compose down`.
+  redis-data:
