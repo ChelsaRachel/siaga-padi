@@ -14,6 +14,9 @@ const CasePhotoPage = lazy(() => import('@/pages/case-photo/CasePhotoPage'))
 const CaseHistoryPage = lazy(() => import('@/pages/case-history/CaseHistoryPage'))
 const CaseDetailPage = lazy(() => import('@/pages/case-detail/CaseDetailPage'))
 const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'))
+const KbCatalogPage = lazy(() => import('@/pages/kb-catalog/KbCatalogPage'))
+const KbReviewPage = lazy(() => import('@/pages/kb-review/KbReviewPage'))
+const KbChunkPreviewPage = lazy(() => import('@/pages/kb-chunk/KbChunkPreviewPage'))
 
 /**
  * Sprint 02 case routes are shared by petani AND penyuluh: the wizard runs
@@ -21,6 +24,16 @@ const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'))
  * history — never hard-restrict these to the petani role.
  */
 const CASE_ROUTE_ROLES: Array<'petani' | 'penyuluh'> = ['petani', 'penyuluh']
+
+/**
+ * Sprint 04 knowledge base is a two-role surface: the admin curates the source
+ * catalog and the domain reviewer decides the chunks. Both need the catalog and
+ * the queue; the API — not the route — enforces who may write what.
+ */
+const KB_CURATION_ROLES: Array<'admin' | 'domain_reviewer'> = [
+  'admin',
+  'domain_reviewer',
+]
 
 /**
  * Protected app routes — everything renders inside the AppLayout shell.
@@ -127,13 +140,35 @@ const mainRoutes: RouteObject[] = [
         ),
       },
 
-      // Domain reviewer
+      // Knowledge base (Sprint 04) — admin curates, domain reviewer decides
       {
         path: 'pengetahuan',
         element: (
-          <RoleGuard allowedRoles={['domain_reviewer']}>
-            <ComingSoonPage title="Pengetahuan" icon="books" sprintLabel="Sprint 02" />
+          <RoleGuard allowedRoles={KB_CURATION_ROLES}>
+            <Suspense fallback={<RouteFallback />}>
+              <KbCatalogPage />
+            </Suspense>
           </RoleGuard>
+        ),
+      },
+      {
+        path: 'pengetahuan/review',
+        element: (
+          <RoleGuard allowedRoles={KB_CURATION_ROLES}>
+            <Suspense fallback={<RouteFallback />}>
+              <KbReviewPage />
+            </Suspense>
+          </RoleGuard>
+        ),
+      },
+      {
+        // Read-only citation target: every signed-in role may open a reference
+        // a recommendation card points at (the API only resolves approved ones).
+        path: 'pengetahuan/rujukan/:refCode',
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <KbChunkPreviewPage />
+          </Suspense>
         ),
       },
 

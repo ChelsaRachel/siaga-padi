@@ -37,7 +37,10 @@ WRONG_PASSWORD = "wrong-password"
 PENYULUH_AREAS = ["Ciparay", "Baleendah"]
 
 # Sprint 02 fixture ids (cases & farmer profile)
+REVIEWER_USER_ID = "user-reviewer-1"
+
 PETANI_PROFILE_ID = "profile-petani-1"
+REVIEWER_PROFILE_ID = "profile-reviewer-1"
 OTHER_PETANI_PROFILE_ID = "profile-petani-2"
 PENYULUH_PROFILE_ID = "profile-penyuluh-1"
 OTHER_PENYULUH_PROFILE_ID = "profile-penyuluh-2"
@@ -452,6 +455,8 @@ def app() -> FastAPI:
     from router import assisted as assisted_router
     from router import cases as cases_router
     from router import farmer_profile as farmer_profile_router
+    from router import kb_governance as kb_governance_router
+    from router import kb_retrieval as kb_retrieval_router
     from router import photos as photos_router
     from router import siaga_auth as siaga_auth_router
     from util.siaga_response import register_siaga_exception_handlers
@@ -462,6 +467,8 @@ def app() -> FastAPI:
     test_app.include_router(cases_router.router)
     test_app.include_router(farmer_profile_router.router)
     test_app.include_router(photos_router.router)
+    test_app.include_router(kb_governance_router.router)
+    test_app.include_router(kb_retrieval_router.router)
     # Same handler api.py registers — guard rejections render the top-level envelope.
     register_siaga_exception_handlers(test_app)
     return test_app
@@ -620,6 +627,295 @@ def case_repo(monkeypatch) -> FakeCaseRepo:
         farmer_profile_router, "obj", FarmerProfileService(repo=repo)
     )
     return repo
+
+
+class FakeKbRepo:
+    """In-memory implementation of `KbRepositoryProtocol` (Sprint 04).
+
+    Mirrors the two guarantees migration 0012 enforces in SQL, so a service bug
+    fails here as loudly as it would against Postgres:
+    - `insert_chunks` rejects a duplicate (ref_code, version) and a second
+      current row for one ref_code (unique index `ux_kb_chunks_ref_current`).
+    - `update_chunk` refuses to rewrite content/ref_code/version (trigger
+      `trg_kb_chunks_no_rewrite`).
+    - `list_active_chunks` reproduces the `kb_active_chunks` view exactly.
+    """
+
+    def __init__(self, profiles=()) -> None:
+        self.profiles = {p["id"]: dict(p) for p in profiles}
+        self.sources: dict[str, dict] = {}
+        self.chunks: dict[str, dict] = {}
+        self.audit: list[dict] = []
+        self.retrieval_logs: list[dict] = []
+
+    # ---- profiles ---------------------------------------------------------
+
+    def get_profile_by_user_id(self, user_id: str):
+        return next(
+            (dict(p) for p in self.profiles.values() if p.get("user_id") == user_id),
+            None,
+        )
+
+    # ---- sources ----------------------------------------------------------
+
+    def get_source(self, source_id: str):
+        source = self.sources.get(source_id)
+        return dict(source) if source else None
+
+    def insert_source(self, row: dict) -> dict:
+        self.sources[row["id"]] = dict(row)
+        return row
+
+    def update_source(self, source_id: str, fields: dict) -> dict:
+        self.sources[source_id] = {**self.sources[source_id], **fields}
+        return dict(self.sources[source_id])
+
+    def find_sources(self, filters: dict, page: int, limit: int):
+        rows = [dict(s) for s in self.sources.values()]
+        if filters.get("status"):
+            rows = [r for r in rows if r["status"] == filters["status"]]
+        if filters.get("publisher"):
+            needle = filters["publisher"].lower()
+            rows = [r for r in rows if needle in r["publisher"].lower()]
+        if filters.get("availability_status"):
+            rows = [
+                r
+                for r in rows
+                if r.get("availability_status") == filters["availability_status"]
+            ]
+        if filters.get("query"):
+            needle = filters["query"].lower()
+            rows = [r for r in rows if needle in r["title"].lower()]
+        rows.sort(key=lambda r: r["created_at"], reverse=True)
+        start = (page - 1) * limit
+        return rows[start : start + limit], len(rows)
+
+    # ---- chunks -----------------------------------------------------------
+
+    def get_chunk(self, chunk_id: str):
+        chunk = self.chunks.get(chunk_id)
+        return dict(chunk) if chunk else None
+
+    def get_chunks_by_ref(self, ref_code: str):
+        rows = [dict(c) for c in self.chunks.values() if c["ref_code"] == ref_code]
+        return sorted(rows, key=lambda r: r.get("version") or 1)
+
+    def find_chunks(self, filters: dict, page: int, limit: int):
+        rows = [dict(c) for c in self.chunks.values()]
+        rows = [r for r in rows if self._chunk_matches(r, filters)]
+        rows.sort(key=lambda r: (r.get("ordinal") or 0, r.get("version") or 1))
+        start = (page - 1) * limit
+        return rows[start : start + limit], len(rows)
+
+    @staticmethod
+    def _chunk_matches(row: dict, filters: dict) -> bool:
+        simple = (
+            ("source_id", "source_id"),
+            ("approval_status", "approval_status"),
+            ("ref_code", "ref_code"),
+            ("audience", "audience"),
+        )
+        for filter_key, column in simple:
+            if filters.get(filter_key) and row.get(column) != filters[filter_key]:
+                return False
+        if filters.get("disease") and filters["disease"] not in (
+            row.get("disease_tags") or []
+        ):
+            return False
+        if filters.get("phase") and filters["phase"] not in (
+            row.get("phase_tags") or []
+        ):
+            return False
+        if filters.get("is_current") is not None and bool(
+            row.get("is_current", True)
+        ) != bool(filters["is_current"]):
+            return False
+        if filters.get("policy_flagged") is True and not row.get("policy_flag"):
+            return False
+        if filters.get("policy_flagged") is False and row.get("policy_flag"):
+            return False
+        return True
+
+    def insert_chunks(self, rows: list[dict]) -> list[dict]:
+        for row in rows:
+            for existing in self.chunks.values():
+                if (
+                    existing["ref_code"] == row["ref_code"]
+                    and existing.get("version") == row.get("version")
+                ):
+                    raise Exception(
+                        "unique violation: kb_chunks(ref_code, version)"
+                    )
+                if (
+                    existing["ref_code"] == row["ref_code"]
+                    and existing.get("is_current")
+                    and row.get("is_current")
+                ):
+                    raise Exception("unique violation: ux_kb_chunks_ref_current")
+            self.chunks[row["id"]] = dict(row)
+        return rows
+
+    def update_chunk(self, chunk_id: str, fields: dict) -> dict:
+        current = self.chunks[chunk_id]
+        for immutable in ("content", "ref_code", "version"):
+            if immutable in fields and fields[immutable] != current[immutable]:
+                raise Exception("kb_chunks content is versioned")
+        self.chunks[chunk_id] = {**current, **fields}
+        return dict(self.chunks[chunk_id])
+
+    def count_chunks_by_source(self, source_ids: list[str]) -> dict:
+        from service.kb_support import tally_chunk_counts
+
+        return tally_chunk_counts(
+            [c for c in self.chunks.values() if c["source_id"] in set(source_ids)]
+        )
+
+    def max_ref_sequence(self, token: str) -> int:
+        from service.kb_support import parse_ref_sequence
+
+        sequences = [
+            parse_ref_sequence(c["ref_code"])
+            for c in self.chunks.values()
+            if c["ref_code"].startswith(f"RUJ-{token}-")
+        ]
+        return max(sequences) if sequences else 0
+
+    def list_active_chunks(self) -> list[dict]:
+        """Same predicate as the `kb_active_chunks` view (migration 0012)."""
+        now = _now_iso()
+        rows = []
+        for chunk in self.chunks.values():
+            source = self.sources.get(chunk["source_id"]) or {}
+            is_active = (
+                chunk["approval_status"] == "disetujui"
+                and chunk.get("is_current", True)
+                and (not chunk.get("valid_until") or chunk["valid_until"] > now)
+                and source.get("status") != "dipensiunkan"
+                and not source.get("retired_at")
+            )
+            if is_active:
+                rows.append(dict(chunk))
+        return sorted(rows, key=lambda r: r["ref_code"])
+
+    # ---- audit & logs -----------------------------------------------------
+
+    def insert_audit(self, row: dict) -> dict:
+        self.audit.append(dict(row))
+        return row
+
+    def insert_retrieval_log(self, row: dict) -> dict:
+        self.retrieval_logs.append(dict(row))
+        return row
+
+
+@pytest.fixture()
+def kb_repo(monkeypatch) -> FakeKbRepo:
+    """Wire both KB routers to ONE in-memory fake.
+
+    Known world: admin Sari (curates), domain reviewer Rudi (decides), and
+    petani Ani — who must never reach a curation endpoint.
+    """
+    from middleware import role_guard
+    from router import kb_governance as kb_governance_router
+    from router import kb_retrieval as kb_retrieval_router
+    from service.kb_governance import KbGovernanceService
+    from service.kb_retrieval import KbRetrievalService
+
+    repo = FakeKbRepo(
+        profiles=[
+            make_profile(ADMIN_PROFILE_ID, ADMIN_USER_ID, "admin", "Sari Admin"),
+            make_profile(
+                REVIEWER_PROFILE_ID, REVIEWER_USER_ID, "domain_reviewer",
+                "Rudi Reviewer",
+            ),
+            make_profile(
+                PETANI_PROFILE_ID, PETANI_USER_ID, "petani", "Ani Petani"
+            ),
+        ]
+    )
+    guard_profiles = {
+        profile["user_id"]: dict(profile) for profile in repo.profiles.values()
+    }
+    monkeypatch.setattr(role_guard, "_load_profile", guard_profiles.get)
+    monkeypatch.setattr(
+        kb_governance_router, "obj", KbGovernanceService(repo=repo)
+    )
+    monkeypatch.setattr(kb_retrieval_router, "obj", KbRetrievalService(repo=repo))
+    return repo
+
+
+def seed_kb_source(
+    repo: FakeKbRepo,
+    source_id: str = "src-bbpadi",
+    title: str = "Pengendalian Penyakit Blas",
+    publisher: str = "BB Padi",
+    status: str = "draf",
+    retired_at: str | None = None,
+) -> dict:
+    """Insert a source row directly (bypasses service validation on purpose)."""
+    now = _now_iso()
+    row = {
+        "id": source_id,
+        "title": title,
+        "publisher": publisher,
+        "published_date": "2024",
+        "edition_version": "v2",
+        "license_note": "Dokumen publik pemerintah",
+        "category": "panduan",
+        "source_url": None,
+        "status": status,
+        "availability_status": "tersedia",
+        "registered_by_profile_id": ADMIN_PROFILE_ID,
+        "retired_at": retired_at,
+        "created_at": now,
+        "updated_at": now,
+    }
+    repo.sources[source_id] = dict(row)
+    return row
+
+
+def seed_kb_chunk(
+    repo: FakeKbRepo,
+    chunk_id: str,
+    ref_code: str,
+    source_id: str = "src-bbpadi",
+    content: str = "Gunakan varietas tahan blas pada fase anakan.",
+    approval_status: str = "menunggu",
+    disease_tags: list | None = None,
+    phase_tags: list | None = None,
+    audience: str = "penyuluh",
+    policy_flag: str | None = None,
+    version: int = 1,
+    is_current: bool = True,
+    valid_until: str | None = None,
+    action_type: str | None = None,
+) -> dict:
+    """Insert a chunk row directly, with explicit tags (no auto-detection)."""
+    now = _now_iso()
+    row = {
+        "id": chunk_id,
+        "ref_code": ref_code,
+        "source_id": source_id,
+        "source_version": "v2",
+        "location": "Hal. 12",
+        "content": content,
+        "disease_tags": list(disease_tags or []),
+        "phase_tags": list(phase_tags or []),
+        "action_type": action_type,
+        "audience": audience,
+        "risk": "dibatasi" if policy_flag else "aman",
+        "policy_flag": policy_flag,
+        "approval_status": approval_status,
+        "reject_reason": None,
+        "version": version,
+        "is_current": is_current,
+        "valid_until": valid_until,
+        "ordinal": len(repo.chunks),
+        "created_at": now,
+        "updated_at": now,
+    }
+    repo.chunks[chunk_id] = dict(row)
+    return row
 
 
 @pytest.fixture()

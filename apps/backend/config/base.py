@@ -113,6 +113,15 @@ class BaseSetting(BaseSettings):
     SUPABASE_TABLE_CASE_PHOTO: str = Field(default="case_photos")
     SUPABASE_BUCKET_CASE_PHOTOS: str = Field(default="case-photos")
 
+    # --- Siaga Padi (Sprint 04: Knowledge Base Governance) table names ---
+    SUPABASE_TABLE_KB_SOURCE: str = Field(default="kb_sources")
+    SUPABASE_TABLE_KB_CHUNK: str = Field(default="kb_chunks")
+    # The active retrieval index is a VIEW (migration 0012) — reading it is the
+    # only way runtime code sees chunks, so drafts can never leak.
+    SUPABASE_VIEW_KB_ACTIVE_CHUNK: str = Field(default="kb_active_chunks")
+    SUPABASE_TABLE_KB_AUDIT_EVENT: str = Field(default="kb_audit_events")
+    SUPABASE_TABLE_KB_RETRIEVAL_LOG: str = Field(default="kb_retrieval_logs")
+
     # External Authentication Configuration
     LOGIN_METHOD: Optional[str] = Field(default=None)
     LOGIN_API_URL: Optional[str] = Field(default=None)

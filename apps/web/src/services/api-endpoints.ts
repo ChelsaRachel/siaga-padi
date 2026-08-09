@@ -37,6 +37,22 @@ export const API_ENDPOINTS = {
     LIST: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/photos`,
     ESCALATE: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/photos/escalate`,
   },
+  // Siaga Padi Sprint 04 contract — docs/api-spec-kb.md
+  KB: {
+    SOURCES: `${SUFFIX_BASE}/kb/sources`,
+    SOURCES_GET_ALL: `${SUFFIX_BASE}/kb/sources/get-all`,
+    SOURCE_DETAIL: (sourceId: string) => `${SUFFIX_BASE}/kb/sources/${sourceId}`,
+    SOURCE_INGEST: (sourceId: string) => `${SUFFIX_BASE}/kb/sources/${sourceId}/ingest`,
+    SOURCE_RETIRE: (sourceId: string) => `${SUFFIX_BASE}/kb/sources/${sourceId}/retire`,
+    CHUNKS_GET_ALL: `${SUFFIX_BASE}/kb/chunks/get-all`,
+    CHUNK_DETAIL: (chunkId: string) => `${SUFFIX_BASE}/kb/chunks/${chunkId}`,
+    CHUNK_BY_REF: (refCode: string) => `${SUFFIX_BASE}/kb/chunks/ref/${refCode}`,
+    CHUNK_DIFF: (refCode: string) => `${SUFFIX_BASE}/kb/chunks/ref/${refCode}/diff`,
+    CHUNK_APPROVE: (chunkId: string) => `${SUFFIX_BASE}/kb/chunks/${chunkId}/approve`,
+    CHUNK_REJECT: (chunkId: string) => `${SUFFIX_BASE}/kb/chunks/${chunkId}/reject`,
+    CHUNK_REVISE: (chunkId: string) => `${SUFFIX_BASE}/kb/chunks/${chunkId}/revise`,
+    RETRIEVAL_TEST: `${SUFFIX_BASE}/kb/retrieval-test`,
+  },
   FARMER_PROFILE: {
     UPDATE: `${SUFFIX_BASE}/farmer/profile`,
     FIELDS: `${SUFFIX_BASE}/farmer/profile/fields`,
