@@ -122,6 +122,30 @@ class BaseSetting(BaseSettings):
     SUPABASE_TABLE_KB_AUDIT_EVENT: str = Field(default="kb_audit_events")
     SUPABASE_TABLE_KB_RETRIEVAL_LOG: str = Field(default="kb_retrieval_logs")
 
+    # --- Siaga Padi (Sprint 05: AI Triage & Rekomendasi) table names ---
+    SUPABASE_TABLE_ANALYSIS_RESULT: str = Field(default="analysis_results")
+    SUPABASE_TABLE_QUESTION_BANK: str = Field(default="question_bank")
+    SUPABASE_TABLE_CASE_ANSWER: str = Field(default="case_answers")
+    SUPABASE_TABLE_RECOMMENDATION: str = Field(default="recommendations")
+
+    # --- Siaga Padi (Sprint 05): CV model endpoint ---
+    # Empty endpoint = the deterministic fixture client (see
+    # `service/cv_inference.py`). The trained 4-class model is owned by the CV
+    # & Dataset Owner; pointing this at it is the only change needed.
+    CV_MODEL_ENDPOINT: Optional[str] = Field(default="")
+    CV_MODEL_VERSION: Optional[str] = Field(default="")
+    CV_MODEL_API_KEY: Optional[str] = Field(default="")
+
+    # --- Siaga Padi (Sprint 05): language provider (OpenRouter) ---
+    # The ONE bounded AI call of the triage pipeline. Secrets come from the
+    # environment only — never a config file, never a migration. Sprint 08
+    # formalises provider selection on top of these.
+    OPENROUTER_API_KEY: Optional[str] = Field(default="")
+    OPENROUTER_MODEL: Optional[str] = Field(default="anthropic/claude-sonnet-4.5")
+    OPENROUTER_BASE_URL: Optional[str] = Field(
+        default="https://openrouter.ai/api/v1"
+    )
+
     # External Authentication Configuration
     LOGIN_METHOD: Optional[str] = Field(default=None)
     LOGIN_API_URL: Optional[str] = Field(default=None)

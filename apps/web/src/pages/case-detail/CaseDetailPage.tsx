@@ -6,7 +6,7 @@ import { CaseTimeline, StagedProgress } from '@/features/case/history'
 import { isPhotoPending, isPhotoRetake } from '@/features/case/photo'
 import type { DisplayStage } from '@/types/siaga-case'
 import { CaseDetailHeader } from './parts/CaseDetailHeader'
-import { ResultPlaceholderCard } from './parts/ResultPlaceholderCard'
+import { CaseResultSection } from './parts/CaseResultSection'
 import { ResumePhotoCard } from './parts/ResumePhotoCard'
 import { useCaseDetail } from './hooks/useCaseDetail'
 
@@ -55,7 +55,7 @@ function CaseDetailPage() {
 
           {PROGRESS_VISIBLE_STAGES.includes(caseData.displayStage) && <StagedProgress status={caseData.status} />}
 
-          <ResultPlaceholderCard />
+          <CaseResultSection caseData={caseData} />
 
           <section aria-label="Linimasa kasus" className="flex flex-col gap-3">
             <h2 className="text-h6 font-bold text-font-primary">Linimasa</h2>

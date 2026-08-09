@@ -33,6 +33,11 @@ ROUTER_MODULES = {
     # /kb/retrieval*.
     "kb_governance": "kb_governance",
     "kb_retrieval": "kb_retrieval",
+    # Siaga Padi Sprint 05 (AI Triage): /cases/{id}/analysis, /questions,
+    # /answers, /recommendation.
+    "triage": "triage",
+    "questionnaire": "questionnaire",
+    "recommendation": "recommendation",
     # Mandatory: agent_mgmt is the agent management plane that every Argus app needs.
     # Cannot be disabled via --routers / ENABLED_ROUTERS — be-python is the service
     # layer for the workforce of agents.

@@ -53,6 +53,14 @@ export const API_ENDPOINTS = {
     CHUNK_REVISE: (chunkId: string) => `${SUFFIX_BASE}/kb/chunks/${chunkId}/revise`,
     RETRIEVAL_TEST: `${SUFFIX_BASE}/kb/retrieval-test`,
   },
+  // Siaga Padi Sprint 05 contract — docs/api-spec-triage.md
+  TRIAGE: {
+    ANALYSIS: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/analysis`,
+    QUESTIONS: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/questions`,
+    ANSWERS: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/answers`,
+    RECOMMENDATION: (caseId: string) =>
+      `${SUFFIX_BASE}/cases/${caseId}/recommendation`,
+  },
   FARMER_PROFILE: {
     UPDATE: `${SUFFIX_BASE}/farmer/profile`,
     FIELDS: `${SUFFIX_BASE}/farmer/profile/fields`,

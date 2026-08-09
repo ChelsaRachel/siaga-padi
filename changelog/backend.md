@@ -6,6 +6,30 @@ Append-only. Newest entries at the top. Updated whenever a backend task is creat
 
 ---
 
+### 2026-08-09 · [Sprint 05 — ai-triage](../sprint/archive/05-ai-triage/sprint.md) · Task: [03 — Recommendation Engine + Safety Checker](../sprint/archive/05-ai-triage/backend/03-recommendation-engine.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/service/recommendation.py`, `apps/backend/service/safety_checker.py`, `apps/backend/service/llm_provider.py`, `apps/backend/router/recommendation.py`, `apps/backend/config/base.py`, `apps/backend/tests/test_recommendation.py`
+> Pengambilan rujukan aktif (kandidat teratas + fase, kedua audiens) → di bawah 2 rujukan mesin AI **tidak dipanggil sama sekali** dan kartu jadi `insufficient_evidence` + wajib review; cukup → SATU panggilan OpenRouter terbatas (kunci dari env saja) → pemeriksa keamanan → gagal berulang → seam fallback aturan (Sprint 07). Pemeriksa keamanan menegakkan empat aturan FR-007: bentuk valid, setiap butir tindakan mengutip ≥1 rujukan yang benar-benar terambil, nol dosis/merek/klaim diagnosis final di sisi petani, dan potongan ber-`policy_flag` boleh ditautkan untuk penyuluh tetapi tidak pernah dinarasikan ke petani. Prompt hanya membawa ringkasan analisis + jawaban + isi rujukan — nama/telepon/koordinat/kode kasus/wilayah diuji absen. Kartu fallback pun ikut diperiksa; gagal → turun ke `insufficient_evidence`. Kunci penyedia yang belum dikonfigurasi sengaja **gagal keras**, bukan diam-diam turun ke mode terbatas. Deteksi "diagnosis final" dibuat sadar-negasi supaya disclaimer wajib "bukan diagnosis final" tidak ikut terblokir.
+
+### 2026-08-09 · [Sprint 05 — ai-triage](../sprint/archive/05-ai-triage/sprint.md) · Task: [02 — Questionnaire Engine](../sprint/archive/05-ai-triage/backend/02-questionnaire-engine.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/service/questionnaire.py`, `apps/backend/router/questionnaire.py`, `apps/backend/dto/triage.py`, `apps/backend/tests/test_questionnaire.py`
+> Pemilih pertanyaan deterministik dari bank **tervalidasi** saja (maks 5): spesifik-penyakit dulu lalu umum, urut `ordinal`, sehingga membuka ulang kuesioner menampilkan urutan yang sama. Kasus abstain tetap mendapat pertanyaan — justru saat itulah konteks paling dibutuhkan reviewer. Jawaban parsial diperbolehkan; upsert per `(case_id, question_id)` jadi menjawab ulang mengganti, bukan menduplikasi; `tidak_tahu` tidak menambah bobot urgensi. Kombinasi berisiko (bobot ≥3) menaikkan `cases.urgency_flag` — diuji bahwa baris analisis tidak tersentuh sama sekali. Mode pendampingan mencatat penyuluh sebagai pengisi.
+
+### 2026-08-09 · [Sprint 05 — ai-triage](../sprint/archive/05-ai-triage/sprint.md) · Task: [01 — CV Inference Integration](../sprint/archive/05-ai-triage/backend/01-cv-inference.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/service/cv_inference.py`, `apps/backend/service/triage_pipeline.py`, `apps/backend/service/triage_support.py`, `apps/backend/router/triage.py`, `apps/backend/config/base.py`, `apps/backend/tests/test_cv_inference.py`, `apps/backend/tests/conftest.py`
+> Seam model (`CvModelClient`) dengan stub fixture **deterministik per fingerprint foto** — gambar yang sama selalu menghasilkan skor yang sama, jadi kasus fixture bisa direproduksi dan uji konflik mungkin dilakukan; `HttpCvModelClient` aktif begitu `CV_MODEL_ENDPOINT` diisi (model milik Chelsa). Kalibrasi suhu meredam softmax over-confident tanpa pernah mengubah urutan kandidat, agregasi rata-rata antar foto, band tinggi/sedang/rendah, `tidak_yakin` di bawah ambang, `konflik` saat dua foto sama-sama yakin pada label berbeda (konflik mengalahkan keyakinan rendah), dan penalti keyakinan untuk foto `ambang`. Hasil disimpan beku dengan `model_version` + `threshold_version`; abstain/konflik/band di bawah tinggi menandai kasus wajib review, dan kuesioner tetap berjalan. Menjalankan ulang analisis mengembalikan baris yang sama (idempoten). Kasus yang sudah dieskalasi tanpa foto layak sengaja tidak dianalisis.
+
+### 2026-08-09 · [Sprint 05 — ai-triage](../sprint/archive/05-ai-triage/sprint.md) · Task: [00 — Schema Triage](../sprint/archive/05-ai-triage/backend/00-schema-triage.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/supabase/migrations/0013_triage.sql`, `apps/backend/models/siaga_triage.py`, `apps/backend/dto/siaga_triage.py`, `apps/backend/dto/triage.py`, `apps/backend/config/base.py`, `apps/backend/api.py`
+> Migration 0013: `analysis_results` (kandidat ≤3, band, status abstain, penalti kualitas, versi model+ambang, `evidence_maps` reviewer-only, unique per kasus), `question_bank` berversi + `approved`, `case_answers` (unique `(case_id, question_id)`, pencatat pengisi), `recommendations` (dua tampilan, `ref_codes`, `origin`, empat kolom versi untuk reproduktibilitas), kolom `cases.urgency_flag`, fungsi `siaga_case_is_visible()` sebagai satu predikat RLS, dan trigger yang menolak SETIAP update/delete pada hasil analisis. Diterapkan live ke stack Supabase lokal (2026-08-09) dan diverifikasi langsung di Postgres: UPDATE dan DELETE sama-sama ditolak `55000`, 11 pertanyaan seed masuk. Baris uji dibersihkan setelah verifikasi. Pembagian peran di DTO: respons petani DIBANGUN tanpa skor/versi/`evidenceMaps`/`technicalView` — bukan disembunyikan di UI. **Catatan:** bank pertanyaan seed adalah placeholder ber-flag `approved` untuk membuat pipeline jalan; teks & bobot urgensi menunggu validasi Chelsa/domain_reviewer sebelum pilot.
+
 ### 2026-08-08 · [Sprint 04 — knowledge-base](../sprint/archive/04-knowledge-base/sprint.md) · Task: [02 — KB Governance Routes](../sprint/archive/04-knowledge-base/backend/02-kb-governance-routes.md) · ✅ Done
 
 **Event:** Task completed

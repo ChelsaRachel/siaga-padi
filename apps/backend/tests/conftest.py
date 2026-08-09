@@ -416,6 +416,11 @@ def seed_case(
         "area_kecamatan": area_kecamatan,
         "status": status,
         "notes": None,
+        # Columns added by later migrations carry their DB defaults, so the fake
+        # row keeps the same shape a real `select *` returns (0011, 0013).
+        "needs_human_review": False,
+        "review_reason": None,
+        "urgency_flag": False,
         "observed_at": now,
         "idempotency_key": f"seed-{case_id}",
         "config_version_id": None,
@@ -458,7 +463,10 @@ def app() -> FastAPI:
     from router import kb_governance as kb_governance_router
     from router import kb_retrieval as kb_retrieval_router
     from router import photos as photos_router
+    from router import questionnaire as questionnaire_router
+    from router import recommendation as recommendation_router
     from router import siaga_auth as siaga_auth_router
+    from router import triage as triage_router
     from util.siaga_response import register_siaga_exception_handlers
 
     test_app = FastAPI()
@@ -469,6 +477,9 @@ def app() -> FastAPI:
     test_app.include_router(photos_router.router)
     test_app.include_router(kb_governance_router.router)
     test_app.include_router(kb_retrieval_router.router)
+    test_app.include_router(triage_router.router)
+    test_app.include_router(questionnaire_router.router)
+    test_app.include_router(recommendation_router.router)
     # Same handler api.py registers — guard rejections render the top-level envelope.
     register_siaga_exception_handlers(test_app)
     return test_app
@@ -944,4 +955,221 @@ def photo_repo(monkeypatch) -> FakePhotoRepo:
         assignments={PENYULUH_USER_ID: PENYULUH_AREAS},
     )
     monkeypatch.setattr(photos_router, "obj", PhotoService(repo=repo))
+    return repo
+
+
+# ---- Sprint 05 (AI Triage) ----------------------------------------------------
+
+BLAS_FINGERPRINT = "fixture-blas-tinggi"
+BERCAK_FINGERPRINT = "fixture-bercak-tinggi"
+ABSTAIN_FINGERPRINT = "fixture-abstain"
+
+
+class FakeTriageRepo(FakePhotoRepo):
+    """In-memory implementation of the triage repo seam (Sprint 05).
+
+    Extends the photo fake because the pipeline reads the case's photos. The
+    analysis store deliberately REFUSES a second row per case, mirroring the
+    `unique (case_id)` constraint plus the immutability trigger in 0013.
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.analyses: dict[str, dict] = {}
+        self.questions: dict[str, dict] = {}
+        self.answers: dict[str, dict] = {}
+        self.recommendations: dict[str, dict] = {}
+
+    def get_analysis_by_case(self, case_id: str):
+        return next(
+            (dict(r) for r in self.analyses.values() if r["case_id"] == case_id),
+            None,
+        )
+
+    def insert_analysis(self, row: dict) -> dict:
+        if self.get_analysis_by_case(row["case_id"]):
+            raise Exception("unique violation: analysis_results(case_id)")
+        self.analyses[row["id"]] = dict(row)
+        return row
+
+    def list_approved_questions(self) -> list[dict]:
+        rows = [dict(q) for q in self.questions.values() if q.get("approved")]
+        return sorted(rows, key=lambda r: r["ordinal"])
+
+    def list_answers(self, case_id: str) -> list[dict]:
+        rows = [dict(a) for a in self.answers.values() if a["case_id"] == case_id]
+        return sorted(rows, key=lambda r: r["created_at"])
+
+    def upsert_answer(self, row: dict) -> dict:
+        key = f"{row['case_id']}::{row['question_id']}"
+        existing = self.answers.get(key)
+        # Keep the original id/created_at on re-answer, like a real upsert.
+        self.answers[key] = {**(existing or {}), **row, "id": (existing or row)["id"]}
+        return dict(self.answers[key])
+
+    def get_recommendation_by_case(self, case_id: str):
+        return next(
+            (
+                dict(r)
+                for r in self.recommendations.values()
+                if r["case_id"] == case_id
+            ),
+            None,
+        )
+
+    def upsert_recommendation(self, row: dict) -> dict:
+        self.recommendations[row["case_id"]] = dict(row)
+        return row
+
+
+class FakeLlmClient:
+    """Scripted provider. Each call pops the next queued payload or raises."""
+
+    def __init__(self, payloads=None, error=None) -> None:
+        self.payloads = list(payloads or [])
+        self.error = error
+        self.prompts: list[str] = []
+
+    @property
+    def provider_version(self) -> str:
+        return "fake:test-model"
+
+    def complete_json(self, system_prompt: str, user_prompt: str) -> dict:
+        self.prompts.append(user_prompt)
+        if self.error is not None:
+            raise self.error
+        if not self.payloads:
+            from service.llm_provider import LlmProviderError
+
+            raise LlmProviderError("no scripted payload left")
+        return self.payloads.pop(0)
+
+
+def seed_photo(
+    repo: FakeTriageRepo,
+    photo_id: str,
+    case_id: str,
+    slot_no: int,
+    fingerprint: str,
+    quality_status: str = "layak",
+) -> dict:
+    """Insert an accepted photo row directly (skips the Sprint 03 gate)."""
+    now = _now_iso()
+    row = {
+        "id": photo_id,
+        "case_id": case_id,
+        "slot_no": slot_no,
+        "storage_path": f"cases/{case_id}/slot-{slot_no}/{photo_id}.jpg",
+        "quality_status": quality_status,
+        "reject_reasons": [],
+        "retake_count": 0,
+        "fingerprint": fingerprint,
+        "quality_config_version": "test",
+        "exif_stripped": True,
+        "never_for_training": False,
+        "created_at": now,
+        "updated_at": now,
+    }
+    repo.photos[photo_id] = dict(row)
+    return row
+
+
+def seed_question(
+    repo: FakeTriageRepo,
+    question_id: str,
+    code: str,
+    text: str = "Apakah gejala menyebar?",
+    trigger_rules: dict | None = None,
+    urgency_rules: dict | None = None,
+    ordinal: int = 0,
+    approved: bool = True,
+) -> dict:
+    """Insert one question-bank row directly."""
+    now = _now_iso()
+    row = {
+        "id": question_id,
+        "code": code,
+        "text": text,
+        "illustration": None,
+        "why_asked": "Konteks tambahan untuk penyuluh.",
+        "trigger_rules": trigger_rules or {},
+        "urgency_rules": urgency_rules or {},
+        "ordinal": ordinal,
+        "version": 1,
+        "approved": approved,
+        "created_at": now,
+        "updated_at": now,
+    }
+    repo.questions[question_id] = dict(row)
+    return row
+
+
+def seed_analysis(
+    repo: FakeTriageRepo,
+    analysis_id: str,
+    case_id: str,
+    label: str = "blas_daun",
+    score: float = 0.86,
+    band: str = "tinggi",
+    abstain_status: str = "yakin",
+) -> dict:
+    """Insert a frozen analysis result directly (skips the CV pipeline)."""
+    row = {
+        "id": analysis_id,
+        "case_id": case_id,
+        "candidates": [{"label": label, "calibrated_score": score}],
+        "confidence_band": band,
+        "abstain_status": abstain_status,
+        "quality_penalty": False,
+        "model_version": "cv-fixture-v0",
+        "threshold_version": "ambang-2026-07-v1",
+        "evidence_maps": [{"photoId": "photo-1", "slotNo": 1, "regions": []}],
+        "created_at": _now_iso(),
+    }
+    repo.analyses[analysis_id] = dict(row)
+    return row
+
+
+def _triage_world() -> FakeTriageRepo:
+    return FakeTriageRepo(
+        profiles=[
+            make_profile(
+                PETANI_PROFILE_ID, PETANI_USER_ID, "petani", "Ani Petani",
+                kecamatan="Ciparay",
+            ),
+            make_profile(
+                OTHER_PETANI_PROFILE_ID, OTHER_PETANI_USER_ID, "petani",
+                "Budi Tani", kecamatan="Soreang",
+            ),
+            make_profile(
+                PENYULUH_PROFILE_ID, PENYULUH_USER_ID, "penyuluh", "Dewi Penyuluh",
+            ),
+            make_profile(ADMIN_PROFILE_ID, ADMIN_USER_ID, "admin", "Sari Admin"),
+        ],
+        assignments={PENYULUH_USER_ID: PENYULUH_AREAS},
+    )
+
+
+@pytest.fixture()
+def triage_repo(monkeypatch) -> FakeTriageRepo:
+    """Wire all three Sprint 05 routers to ONE shared in-memory fake.
+
+    They must share a repo: the questionnaire reads the analysis the pipeline
+    wrote, and the recommendation reads both.
+    """
+    from router import questionnaire as questionnaire_router
+    from router import recommendation as recommendation_router
+    from router import triage as triage_router
+    from service.questionnaire import QuestionnaireService
+    from service.recommendation import RecommendationService
+    from service.triage_pipeline import TriagePipelineService
+
+    repo = _triage_world()
+    monkeypatch.setattr(triage_router, "obj", TriagePipelineService(repo=repo))
+    monkeypatch.setattr(
+        questionnaire_router, "obj", QuestionnaireService(repo=repo)
+    )
+    monkeypatch.setattr(
+        recommendation_router, "obj", RecommendationService(repo=repo)
+    )
     return repo

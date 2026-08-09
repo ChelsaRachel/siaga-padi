@@ -6,6 +6,24 @@ Append-only. Newest entries at the top. Updated whenever a frontend task is crea
 
 ---
 
+### 2026-08-09 · [Sprint 05 — ai-triage](../sprint/archive/05-ai-triage/sprint.md) · Task: [03 — Kartu Rekomendasi + Laci Rujukan](../sprint/archive/05-ai-triage/frontend/03-recommendation-cards.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/pages/case-detail/parts/CaseResultSection.tsx`, `apps/web/src/pages/case-detail/CaseDetailPage.tsx`, `apps/web/src/features/case/triage/components/FarmerActionCards.tsx`, `apps/web/src/features/case/triage/components/TechnicalRecommendationCard.tsx`, `apps/web/src/features/case/triage/components/ReferenceDrawer.tsx`, `apps/web/src/features/case/triage/components/ReviewStatusBar.tsx`
+> Slot hasil Sprint 02 akhirnya terisi: kartu petani bertumpuk (lakukan sekarang bernomor, pantau, hindari, kapan hubungi penyuluh) dengan tautan "Lihat sumber" **per butir saran**, bukan satu daftar pustaka di bawah — telusur rujukan bersifat per-saran di FR-007. Laci rujukan berupa sheet bawah yang menaut pratinjau potongan KB Sprint 04, sengaja tidak mendominasi layar. Kartu teknis penyuluh (ringkasan, ketidakpastian, kutipan bukti, penanda aturan, empat kolom versi) hanya dirender bila `technicalView` ada — respons petani memang tidak membawanya. Indikator status review + penanda "Perlu perhatian" + waktu pembaruan + modal "Hubungi Penyuluh" (konteks kasus + wilayah). `origin='rule_fallback'` menampilkan badge mode terbatas, `insufficient_evidence` menampilkan pernyataan jujur bahwa belum ada saran aman. 404 diperlakukan sebagai state normal: ajakan melanjutkan pemeriksaan, bukan pesan error. `ResultPlaceholderCard` dihapus. 5 vitest baru.
+
+### 2026-08-09 · [Sprint 05 — ai-triage](../sprint/archive/05-ai-triage/sprint.md) · Task: [02 — Kuesioner Konteks](../sprint/archive/05-ai-triage/frontend/02-questionnaire-ui.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/pages/case-questionnaire/CaseQuestionnairePage.tsx`, `apps/web/src/features/case/triage/components/QuestionStepper.tsx`, `apps/web/src/features/case/triage/store/useQuestionnaireStore.ts`, `apps/web/src/routes/main.routes.tsx`
+> Satu pertanyaan per layar: tombol besar Ya / Tidak / **Tidak Tahu** sejajar (bukan disembunyikan di balik tautan lewati — tidak tahu adalah jawaban sah), keterangan "mengapa ditanya", indikator "2 dari 4" plus titik progres. Jawaban disimpan di store sehingga navigasi mundur mempertahankannya, dan dikirim sekali di akhir supaya koneksi putus di tengah kuesioner tidak menghilangkan apa pun; jawaban yang sudah tercatat di server ikut memuat ulang pilihan sebelumnya. Setelah kirim, rekomendasi langsung disusun dengan layar progres bertahap di antaranya — dari sisi petani terasa satu tarikan napas. Mode pendampingan menampilkan pengisi secara halus. 6 vitest store baru.
+
+### 2026-08-09 · [Sprint 05 — ai-triage](../sprint/archive/05-ai-triage/sprint.md) · Task: [01 — Hasil Indikasi Awal](../sprint/archive/05-ai-triage/frontend/01-analysis-results.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/pages/case-analysis/CaseAnalysisPage.tsx`, `apps/web/src/features/case/triage/components/IndicationCard.tsx`, `apps/web/src/features/case/triage/components/TechnicalPanel.tsx`, `apps/web/src/features/case/triage/triage-labels.ts`, `apps/web/src/services/triage.service.ts`, `apps/web/src/types/siaga-triage.d.ts`, `apps/web/src/pages/case-photo/CasePhotoPage.tsx`, `apps/web/docs/api-spec-triage.md`
+> Layar progres bertahap bernama menggantikan auto-continue placeholder Sprint 03 — alur foto sekarang mendarat di `/kasus/:id/analisis`, kecuali kasus yang sudah dieskalasi yang tetap ke detail kasus (dikirim ke penyuluh tanpa label otomatis adalah pilihan sadar pengguna). Kartu petani: indikasi + band + disclaimer wajib; saat abstain **tidak ada label paksa** — badge "Tidak Yakin"/"Konflik", penjelasan jujur, dan catatan review otomatis. Panel teknis penyuluh (3 kandidat + skor persis + kualitas foto + versi model/ambang + tautan "Buka di Review") hanya dirender bila payload benar-benar membawa skor, jadi kebocoran peran mustahil walau komponen salah tempat. Peta sorotan bukti sengaja tidak dirender (reviewer-only, Sprint 06). Kontrak FE↔BE dipin di `docs/api-spec-triage.md`. 4 vitest baru.
+
 ### 2026-08-08 · [Sprint 04 — knowledge-base](../sprint/archive/04-knowledge-base/sprint.md) · Task: [02 — Review Potongan + Diff + Uji Pengambilan](../sprint/archive/04-knowledge-base/frontend/02-chunk-review-retrieval.md) · ✅ Done
 
 **Event:** Task completed

@@ -13,6 +13,10 @@ const CaseCreatePage = lazy(() => import('@/pages/case-create/CaseCreatePage'))
 const CasePhotoPage = lazy(() => import('@/pages/case-photo/CasePhotoPage'))
 const CaseHistoryPage = lazy(() => import('@/pages/case-history/CaseHistoryPage'))
 const CaseDetailPage = lazy(() => import('@/pages/case-detail/CaseDetailPage'))
+const CaseAnalysisPage = lazy(() => import('@/pages/case-analysis/CaseAnalysisPage'))
+const CaseQuestionnairePage = lazy(
+  () => import('@/pages/case-questionnaire/CaseQuestionnairePage')
+)
 const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'))
 const KbCatalogPage = lazy(() => import('@/pages/kb-catalog/KbCatalogPage'))
 const KbReviewPage = lazy(() => import('@/pages/kb-review/KbReviewPage'))
@@ -107,6 +111,30 @@ const mainRoutes: RouteObject[] = [
           <RoleGuard allowedRoles={CASE_ROUTE_ROLES}>
             <Suspense fallback={<RouteFallback />}>
               <CasePhotoPage />
+            </Suspense>
+          </RoleGuard>
+        ),
+      },
+
+      {
+        // Sprint 05 triage: analysis result → context questionnaire. Both are
+        // sub-steps of a case, not menu destinations, so they are intentionally
+        // absent from `src/config/menu/*` — reachable only from the case flow.
+        path: 'kasus/:caseId/analisis',
+        element: (
+          <RoleGuard allowedRoles={CASE_ROUTE_ROLES}>
+            <Suspense fallback={<RouteFallback />}>
+              <CaseAnalysisPage />
+            </Suspense>
+          </RoleGuard>
+        ),
+      },
+      {
+        path: 'kasus/:caseId/pertanyaan',
+        element: (
+          <RoleGuard allowedRoles={CASE_ROUTE_ROLES}>
+            <Suspense fallback={<RouteFallback />}>
+              <CaseQuestionnairePage />
             </Suspense>
           </RoleGuard>
         ),

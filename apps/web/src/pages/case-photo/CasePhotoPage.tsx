@@ -47,6 +47,7 @@ function CasePhotoPage() {
   const acceptedCount = usePhotoFlowStore((state) => state.acceptedCount)
   const canEscalate = usePhotoFlowStore((state) => state.canEscalate)
   const hasJustCompleted = usePhotoFlowStore((state) => state.hasJustCompleted)
+  const needsHumanReview = usePhotoFlowStore((state) => state.needsHumanReview)
   const isEscalating = usePhotoFlowStore((state) => state.isEscalating)
   const escalateError = usePhotoFlowStore((state) => state.escalateError)
 
@@ -92,19 +93,27 @@ function CasePhotoPage() {
   }, [caseId])
 
   /*
-   * FR-003 auto-continue: 2 accepted photos (or an escalation) → analysis
-   * route. Driven by `hasJustCompleted`, which only a LIVE upload/escalate
-   * sets — hydrating an already-complete case must leave the user on this
-   * page so a retake stays possible.
+   * FR-003 auto-continue: 2 accepted photos → the Sprint 05 analysis route.
+   * Driven by `hasJustCompleted`, which only a LIVE upload/escalate sets —
+   * hydrating an already-complete case must leave the user on this page so a
+   * retake stays possible.
+   *
+   * An ESCALATED case goes to the case detail instead: it was deliberately
+   * sent to a penyuluh WITHOUT an automatic label, so pushing it into the CV
+   * analysis would contradict the choice the user just made (and the pipeline
+   * refuses it anyway).
    */
   useEffect(() => {
     if (caseId && hasJustCompleted) {
-      navigate(`/kasus/${caseId}`, {
+      const target = needsHumanReview
+        ? `/kasus/${caseId}`
+        : `/kasus/${caseId}/analisis`
+      navigate(target, {
         replace: true,
         state: { fromPhotoFlow: true },
       })
     }
-  }, [hasJustCompleted, caseId, navigate])
+  }, [hasJustCompleted, needsHumanReview, caseId, navigate])
 
   const handleUsePhoto = useCallback(async () => {
     if (!caseId) {

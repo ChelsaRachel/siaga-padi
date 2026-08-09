@@ -2,7 +2,7 @@
 
 **Stack:** backend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** no
 **Autonomous:** yes
 **Depends on:**
@@ -26,12 +26,12 @@ Penyusun rekomendasi: ambil rujukan tervalidasi → satu pemanggilan AI bahasa t
 
 ## TODOs
 
-- [ ] Retrieval by top candidates + phase + audience; below minimum refs → `insufficient_evidence` output + wajib-review (AI not called)
-- [ ] Provider call sends only: analysis summary + answers + retrieved chunk contents — no names, phones, precise coords, raw photos (assert in tests)
-- [ ] Safety checker: every actionable suggestion cites ≥1 ref; forbidden terms blocked; malformed output → limited retries → mark for fallback seam
-- [ ] Persist recommendation (farmer + technical views, ref codes, origin); case → `hasil_siap`; per-case record of model/provider/threshold/KB versions
-- [ ] Low band → output emphasizes uncertainty + escalation, not confident advice
-- [ ] Unit tests: insufficient-evidence path, forbidden-term block, citation coverage, PII exclusion
+- [x] Retrieval by top candidates + phase + audience; below minimum refs → `insufficient_evidence` output + wajib-review (AI not called)
+- [x] Provider call sends only: analysis summary + answers + retrieved chunk contents — no names, phones, precise coords, raw photos (assert in tests)
+- [x] Safety checker: every actionable suggestion cites ≥1 ref; forbidden terms blocked; malformed output → limited retries → mark for fallback seam
+- [x] Persist recommendation (farmer + technical views, ref codes, origin); case → `hasil_siap`; per-case record of model/provider/threshold/KB versions
+- [x] Low band → output emphasizes uncertainty + escalation, not confident advice
+- [x] Unit tests: insufficient-evidence path, forbidden-term block, citation coverage, PII exclusion
 
 ## Done when
 
@@ -41,10 +41,10 @@ A fixture case with approved KB chunks yields a stored recommendation whose ever
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/backend.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/backend.md` (Task completed)
 
 ## Notes
 
