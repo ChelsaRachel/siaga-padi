@@ -1,9 +1,9 @@
 # Sprint 05 — AI Triage & Rekomendasi
 
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Created At:** 2026-07-25
-**Started At:** -
-**Completed At:** -
+**Started At:** 2026-08-09
+**Completed At:** 2026-08-09
 
 ## Goal
 
@@ -46,7 +46,45 @@ backend/00-schema-triage.md (foundation)
 
 ## Outcome
 
-(Filled in on archive.)
+Pipeline triase lengkap berjalan end-to-end: foto layak → indikasi CV
+terkalibrasi (4 kelas) dengan band + abstain/konflik → kuesioner konteks ≤5
+pertanyaan → rekomendasi dua tampilan berbasis rujukan tervalidasi.
+
+**Yang dikirim**
+
+- Migration `0013_triage.sql` diterapkan live ke Supabase lokal; immutabilitas
+  hasil analisis diverifikasi langsung di Postgres (UPDATE dan DELETE sama-sama
+  ditolak `55000`).
+- Seam model CV dengan stub fixture deterministik per fingerprint foto —
+  `CV_MODEL_ENDPOINT` mengaktifkan endpoint terlatih tanpa perubahan lain.
+- Satu panggilan AI bahasa terbatas (OpenRouter) di belakang pemeriksa keamanan
+  empat aturan, plus seam fallback aturan untuk Sprint 07.
+- 3 layar baru (analisis, kuesioner, hasil kasus) dengan pembagian peran
+  petani/penyuluh yang ditegakkan di server.
+- 250 pytest + 219 vitest hijau; `tsc --noEmit` bersih.
+
+**Acceptance — terpenuhi**
+
+- Maks 3 kandidat + band; "Tidak Yakin"/"Konflik" adalah hasil sah HTTP 200 →
+  wajib review, kuesioner tetap berjalan. ✅
+- Satu pertanyaan per layar, Ya/Tidak/Tidak Tahu, tidak pernah dipaksa;
+  penanda urgensi tidak mengubah label (diuji eksplisit). ✅
+- Setiap saran tertelusur ke rujukan; nol dosis/merek di sisi petani; rujukan
+  kurang → "bukti tidak cukup" + wajib review, AI tidak dipanggil. ✅
+- Dua kedalaman tampilan; peta sorotan bukti tidak dirender (reviewer-only,
+  Sprint 06). ✅
+
+**Utang yang dibawa ke sprint berikutnya**
+
+- **Bank pertanyaan seed masih placeholder** (11 baris, ber-flag `approved`
+  agar pipeline jalan). Teks dan bobot urgensi menunggu validasi Chelsa /
+  domain_reviewer sebelum pilot — bukan perubahan skema.
+- Model CV masih fixture; menunggu endpoint terlatih dari Chelsa.
+- Verifikasi end-to-end dengan penyedia AI sungguhan menunggu
+  `OPENROUTER_API_KEY` diisi di `apps/backend/.env`. Tanpa kunci, endpoint
+  rekomendasi sengaja gagal keras (bukan diam-diam turun ke mode terbatas).
+- Ambang & pemilihan penyedia masih dari config version seeded — formalisasi di
+  Sprint 08; fallback aturan penuh di Sprint 07.
 
 ---
 

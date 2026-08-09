@@ -2,7 +2,7 @@
 
 **Stack:** frontend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** no
 **Autonomous:** yes
 **Depends on:**
@@ -27,12 +27,12 @@ Layar hasil akhir kasus (mengisi slot Sprint 02): kartu aksi petani (indikasi, l
 
 ## TODOs
 
-- [ ] Farmer stacked cards (numbered "lakukan sekarang", pantau, hindari, eskalasi) — no jargon, no dosage/brand ever rendered
-- [ ] Reference drawer: per-suggestion ref codes → read-only KB chunk preview (Sprint 04 route); does not dominate the screen
-- [ ] Technical card for penyuluh incl. uncertainty emphasis on low band; `insufficient_evidence` state honest + safe generic actions
-- [ ] Review-status indicator (menunggu/direview/perlu foto ulang) + "Hubungi Penyuluh" modal + last-updated time
-- [ ] `origin='rule_fallback'` renders the limited-mode badge slot (full behavior Sprint 07)
-- [ ] Tests: ref drawer mapping, role split, edge states
+- [x] Farmer stacked cards (numbered "lakukan sekarang", pantau, hindari, eskalasi) — no jargon, no dosage/brand ever rendered
+- [x] Reference drawer: per-suggestion ref codes → read-only KB chunk preview (Sprint 04 route); does not dominate the screen
+- [x] Technical card for penyuluh incl. uncertainty emphasis on low band; `insufficient_evidence` state honest + safe generic actions
+- [x] Review-status indicator (menunggu/direview/perlu foto ulang) + "Hubungi Penyuluh" modal + last-updated time
+- [x] `origin='rule_fallback'` renders the limited-mode badge slot (full behavior Sprint 07)
+- [x] Tests: ref drawer mapping, role split, edge states
 
 ## Done when
 
@@ -42,10 +42,10 @@ A completed fixture case shows farmer cards with working reference drawer and re
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/web.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/web.md` (Task completed)
 
 ## Notes
 

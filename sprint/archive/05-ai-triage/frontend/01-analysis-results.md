@@ -2,7 +2,7 @@
 
 **Stack:** frontend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** no
 **Autonomous:** yes
 **Depends on:**
@@ -26,11 +26,11 @@ Layar hasil analisis dua kedalaman: kartu indikasi petani (bahasa awam + band + 
 
 ## TODOs
 
-- [ ] Staged progress screen (named stages) polling case status; replaces Sprint 03's auto-continue placeholder
-- [ ] Farmer card: indication + band + disclaimer; abstain → honest "Tidak Yakin" copy + auto-review note + safe generic actions
-- [ ] Technical panel (penyuluh only): candidates + exact scores + photo quality + model version; "Buka di Review" link (Sprint 06 route stub)
-- [ ] Conflict badge with per-photo candidate summary; evidence highlight maps NOT rendered for petani (reviewer-only, Sprint 06)
-- [ ] Tests: role gating (petani never sees scores), abstain/conflict rendering
+- [x] Staged progress screen (named stages) polling case status; replaces Sprint 03's auto-continue placeholder
+- [x] Farmer card: indication + band + disclaimer; abstain → honest "Tidak Yakin" copy + auto-review note + safe generic actions
+- [x] Technical panel (penyuluh only): candidates + exact scores + photo quality + model version; "Buka di Review" link (Sprint 06 route stub)
+- [x] Conflict badge with per-photo candidate summary; evidence highlight maps NOT rendered for petani (reviewer-only, Sprint 06)
+- [x] Tests: role gating (petani never sees scores), abstain/conflict rendering
 
 ## Done when
 
@@ -40,10 +40,10 @@ Petani view shows only simple indication + band; penyuluh view adds scores/model
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/web.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/web.md` (Task completed)
 
 ## Notes
 

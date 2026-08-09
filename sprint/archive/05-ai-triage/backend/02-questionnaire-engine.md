@@ -2,7 +2,7 @@
 
 **Stack:** backend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** no
 **Autonomous:** yes
 **Depends on:**
@@ -24,11 +24,11 @@ Pemilih pertanyaan (maks 5, dari bank tervalidasi, berdasarkan hasil foto + fase
 
 ## TODOs
 
-- [ ] Selection: trigger_rules(disease candidates + phase) → ≤5 approved questions, ordered; abstain cases still get questions (context for review)
-- [ ] Submit answers (assisted attribution recorded); "tidak_tahu" adds uncertainty note only
-- [ ] Urgency rules → `urgency_flag` on case (raises review priority; never mutates analysis label)
-- [ ] Questions answered → pipeline proceeds to recommendation stage
-- [ ] Unit tests: selection determinism, ≤5 cap, urgency evaluation, label-immutability
+- [x] Selection: trigger_rules(disease candidates + phase) → ≤5 approved questions, ordered; abstain cases still get questions (context for review)
+- [x] Submit answers (assisted attribution recorded); "tidak_tahu" adds uncertainty note only
+- [x] Urgency rules → `urgency_flag` on case (raises review priority; never mutates analysis label)
+- [x] Questions answered → pipeline proceeds to recommendation stage
+- [x] Unit tests: selection determinism, ≤5 cap, urgency evaluation, label-immutability
 
 ## Done when
 
@@ -38,10 +38,10 @@ A Blas-candidate case at fase anakan gets the expected seeded questions; risky a
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/backend.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/backend.md` (Task completed)
 
 ## Notes
 

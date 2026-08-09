@@ -2,7 +2,7 @@
 
 **Stack:** backend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** yes
 **Autonomous:** no — one-time schema migration + question-bank seed.
 **Depends on:**
@@ -33,10 +33,10 @@ Migration triase: hasil analisis beku (immutable), bank pertanyaan berversi + ja
 
 ## TODOs
 
-- [ ] Draft `0013_triage.sql` per contract (immutability enforced: no update grant on analysis_results)
-- [ ] Seed question bank (approved-flagged placeholder pending expert validation — surface in Notes)
-- [ ] Models + DTOs incl. role-split serialization (petani never receives raw scores/evidence maps)
-- [ ] Migration applied on local stack
+- [x] Draft `0013_triage.sql` per contract (immutability enforced: no update grant on analysis_results)
+- [x] Seed question bank (approved-flagged placeholder pending expert validation — surface in Notes)
+- [x] Models + DTOs incl. role-split serialization (petani never receives raw scores/evidence maps)
+- [x] Migration applied on local stack
 
 ## Done when
 
@@ -46,10 +46,10 @@ Migration applies; UPDATE on `analysis_results` is rejected; DTO for petani role
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/backend.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/backend.md` (Task completed)
 
 ## Notes
 

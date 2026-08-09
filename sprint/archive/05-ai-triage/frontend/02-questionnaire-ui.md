@@ -2,7 +2,7 @@
 
 **Stack:** frontend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** no
 **Autonomous:** yes
 **Depends on:**
@@ -26,11 +26,11 @@ Kuesioner maks 5 pertanyaan, satu per layar: tombol besar Ya / Tidak / Tidak Tah
 
 ## TODOs
 
-- [ ] One-question-per-screen stepper with progress indicator + "mengapa ditanya" note
-- [ ] "Tidak Tahu" always available; back navigation preserves answers
-- [ ] Submit → auto-continue to recommendation screen (staged progress while composing)
-- [ ] Assisted mode: filler identity from assisted store shown subtly
-- [ ] Tests: answer persistence across navigation, completion submit
+- [x] One-question-per-screen stepper with progress indicator + "mengapa ditanya" note
+- [x] "Tidak Tahu" always available; back navigation preserves answers
+- [x] Submit → auto-continue to recommendation screen (staged progress while composing)
+- [x] Assisted mode: filler identity from assisted store shown subtly
+- [x] Tests: answer persistence across navigation, completion submit
 
 ## Done when
 
@@ -40,10 +40,10 @@ A seeded 4-question flow completes with mixed answers (incl. Tidak Tahu) and lan
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/web.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/web.md` (Task completed)
 
 ## Notes
 

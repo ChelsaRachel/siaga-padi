@@ -2,7 +2,7 @@
 
 **Stack:** backend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** no
 **Autonomous:** yes
 **Depends on:**
@@ -26,11 +26,11 @@ Layanan inferensi CV per kasus: panggil model 4-kelas (interface + stub/fixture 
 
 ## TODOs
 
-- [ ] Model client interface + fixture stub returning deterministic candidates for test images
-- [ ] Calibration → band mapping; below-threshold / out-of-competence → `tidak_yakin`; cross-photo divergence beyond threshold → `konflik` (never force a single label)
-- [ ] `ambang` photos apply confidence penalty flag
-- [ ] Persist immutable result with `model_version` + `threshold_version`; abstain/konflik marks case wajib-review (queue consumed in Sprint 06)
-- [ ] Unit tests: band mapping, abstain rule, conflict rule, penalty
+- [x] Model client interface + fixture stub returning deterministic candidates for test images
+- [x] Calibration → band mapping; below-threshold / out-of-competence → `tidak_yakin`; cross-photo divergence beyond threshold → `konflik` (never force a single label)
+- [x] `ambang` photos apply confidence penalty flag
+- [x] Persist immutable result with `model_version` + `threshold_version`; abstain/konflik marks case wajib-review (queue consumed in Sprint 06)
+- [x] Unit tests: band mapping, abstain rule, conflict rule, penalty
 
 ## Done when
 
@@ -40,10 +40,10 @@ Fixture photos produce a stored result with ≤3 candidates + correct band; a co
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/backend.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/backend.md` (Task completed)
 
 ## Notes
 
