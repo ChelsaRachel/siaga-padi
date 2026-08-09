@@ -71,18 +71,34 @@ export const PENYULUH_MENU: IMenu[] = [
 export const ADMIN_MENU: IMenu[] = [
   createMenuItem({ id: 'adhome1', display: 'Beranda', name: 'beranda', path: '/', icon: 'house', isMainPage: true }),
   createMenuItem({ id: 'adpgna2', display: 'Pengguna', name: 'pengguna', path: '/administrator/pengguna', icon: 'users' }),
-  createMenuItem({ id: 'adkonf3', display: 'Konfigurasi', name: 'konfigurasi', path: '/administrator/konfigurasi', icon: 'gear-six' }),
+  createMenuItem({
+    id: 'adpngt3',
+    display: 'Basis Pengetahuan',
+    name: 'basis-pengetahuan',
+    path: '/pengetahuan',
+    icon: 'books',
+    description: 'Katalog sumber resmi & lisensinya',
+  }),
+  createMenuItem({ id: 'adkonf4', display: 'Konfigurasi', name: 'konfigurasi', path: '/administrator/konfigurasi', icon: 'gear-six' }),
 ]
 
 export const DOMAIN_REVIEWER_MENU: IMenu[] = [
   createMenuItem({ id: 'drhome1', display: 'Beranda', name: 'beranda', path: '/', icon: 'house', isMainPage: true }),
   createMenuItem({
     id: 'drpngt2',
-    display: 'Pengetahuan',
-    name: 'pengetahuan',
+    display: 'Basis Pengetahuan',
+    name: 'basis-pengetahuan',
     path: '/pengetahuan',
     icon: 'books',
     description: 'Sumber rujukan & basis pengetahuan',
+  }),
+  createMenuItem({
+    id: 'drantr3',
+    display: 'Antrean Potongan',
+    name: 'antrean-potongan',
+    path: '/pengetahuan/review',
+    icon: 'list-checks',
+    description: 'Setujui atau tolak potongan rujukan',
   }),
 ]
 

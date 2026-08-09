@@ -6,6 +6,18 @@ Append-only. Newest entries at the top. Updated whenever a frontend task is crea
 
 ---
 
+### 2026-08-08 · [Sprint 04 — knowledge-base](../sprint/archive/04-knowledge-base/sprint.md) · Task: [02 — Review Potongan + Diff + Uji Pengambilan](../sprint/archive/04-knowledge-base/frontend/02-chunk-review-retrieval.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/pages/kb-review/`, `apps/web/src/pages/kb-chunk/KbChunkPreviewPage.tsx`, `apps/web/src/features/knowledge/review/`, `apps/web/src/routes/main.routes.tsx`
+> Ruang kerja domain reviewer: antrean potongan (rail PerfectScrollArea) → pratinjau dengan penanda penyakit/fase/tindakan/audiens/risiko, spanduk penanda kebijakan dan label "versi lama" → bar keputusan setujui/tolak dengan alasan WAJIB dan kontrol penanda kebijakan terisi otomatis dari `requiredPolicyFlag` (penolakan API ditampilkan apa adanya) → banding versi baris-per-baris → panel uji pengambilan (ref code + skor + verdict narasi). Rute baca-saja `/pengetahuan/rujukan/:refCode` terbuka untuk semua peran login dengan dukungan `?version=` untuk kutipan historis — target tautan laci rujukan Sprint 05. 10 vitest baru.
+
+### 2026-08-08 · [Sprint 04 — knowledge-base](../sprint/archive/04-knowledge-base/sprint.md) · Task: [01 — Katalog Sumber (Admin)](../sprint/archive/04-knowledge-base/frontend/01-source-catalog.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/web/src/pages/kb-catalog/`, `apps/web/src/features/knowledge/catalog/`, `apps/web/src/features/knowledge/kb-labels.ts`, `apps/web/src/services/kb.service.ts`, `apps/web/src/services/api-endpoints.ts`, `apps/web/src/types/siaga-kb.d.ts`, `apps/web/src/config/menu/siaga.menu.ts`, `apps/web/docs/api-spec-kb.md`
+> Halaman "Basis Pengetahuan" `/pengetahuan`: tabel sumber (penerbit, lisensi terlihat per baris, status + ketersediaan, tally menunggu-review, terakhir ditinjau) dengan filter status/penerbit, form pendaftaran bertahap (identitas → lisensi → kategori & dokumen) yang memicu pemecahan lewat teks tempel atau berkas PDF/teks lalu melaporkan jumlah potongan menunggu review, dan dialog pensiun sumber. Baris sumber membuka daftar potongannya. Menu config-driven ditambahkan untuk admin + domain reviewer; kontrak FE↔BE dipin di `docs/api-spec-kb.md`. 7 vitest baru; 204 vitest total hijau, tsc bersih.
+
 ### 2026-08-03 · [Sprint 03 — photo-quality](../sprint/archive/03-photo-quality/sprint.md) · Audit follow-up · ✅ Done
 
 **Event:** Post-sprint fix (audit temuan #1 & #2)

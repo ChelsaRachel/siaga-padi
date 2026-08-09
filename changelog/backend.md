@@ -6,6 +6,24 @@ Append-only. Newest entries at the top. Updated whenever a backend task is creat
 
 ---
 
+### 2026-08-08 · [Sprint 04 — knowledge-base](../sprint/archive/04-knowledge-base/sprint.md) · Task: [02 — KB Governance Routes](../sprint/archive/04-knowledge-base/backend/02-kb-governance-routes.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/router/kb_governance.py`, `apps/backend/service/kb_governance.py`, `apps/backend/service/kb_support.py`, `apps/backend/dto/kb.py`, `apps/backend/middleware/role_guard.py`, `apps/backend/tests/test_kb_governance.py`
+> Katalog sumber (daftar/edit/pensiun, lisensi wajib), antrean persetujuan potongan dengan alasan tolak wajib, gerbang kebijakan yang membaca ULANG isi potongan saat approve (dosis/merek tanpa penanda → 400), revisi = baris versi baru di bawah `ref_code` yang sama (yang lama jadi non-current, isi utuh), pensiun sumber keluar dari indeks aktif tanpa memutus kutipan kasus lama, dan jejak audit append-only tiap keputusan. Pemisahan peran admin (katalog) vs domain_reviewer (konten). 23 pytest baru; 196 pytest total hijau.
+
+### 2026-08-08 · [Sprint 04 — knowledge-base](../sprint/archive/04-knowledge-base/sprint.md) · Task: [01 — KB Ingest + Retrieval Index](../sprint/archive/04-knowledge-base/backend/01-kb-ingest-retrieval.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/service/kb_ingest.py`, `apps/backend/service/kb_retrieval.py`, `apps/backend/router/kb_retrieval.py`, `apps/backend/requirements.txt`, `apps/backend/api.py`, `apps/backend/tests/test_kb_ingest.py`, `apps/backend/tests/test_kb_retrieval.py`
+> Ingest PDF (pypdf, lokasi `Hal. N`) / teks-markdown (lokasi `§ Judul`) → potongan deterministik ~700 karakter dengan auto-tag penyakit/fase/tindakan, saran penanda kebijakan, dan ref code stabil `RUJ-BLAS-004`; semua potongan mendarat `menunggu` — ingest tidak pernah menyetujui. Pengambilan hanya membaca view `kb_active_chunks` (draf/ditolak/kedaluwarsa/sumber pensiun mustahil bocor), peringkat deterministik penyakit>fase>tindakan>audiens dengan tie-break ref code, `policyFlag` + `narratable` ikut tiap hit, dan log menyimpan ref code + faset saja. `/kb/retrieval` untuk mesin rekomendasi Sprint 05 via `X-Internal-Token`, `/kb/retrieval-test` untuk admin/reviewer. 35 pytest baru.
+
+### 2026-08-08 · [Sprint 04 — knowledge-base](../sprint/archive/04-knowledge-base/sprint.md) · Task: [00 — Schema KB](../sprint/archive/04-knowledge-base/backend/00-schema-kb.md) · ✅ Done
+
+**Event:** Task completed
+**Files:** `apps/backend/supabase/migrations/0012_knowledge_base.sql`, `apps/backend/models/siaga_kb.py`, `apps/backend/dto/siaga_kb.py`, `apps/backend/config/base.py`, `apps/backend/tests/conftest.py`
+> Migration 0012: `kb_sources` (lisensi wajib, status draf/disetujui/dipensiunkan, ketersediaan), `kb_chunks` (ref code stabil + versi, unique `(ref_code, version)` + unique parsial satu versi current, penanda penyakit/fase/tindakan/audiens/risiko/kebijakan, kedaluwarsa), `kb_audit_events` append-only, `kb_retrieval_logs` (ref code saja), view `kb_active_chunks` sebagai SATU definisi indeks aktif, trigger penolak penulisan ulang isi, dan RLS kurator vs pembaca kutipan. Diterapkan live ke stack Supabase lokal (2026-08-09) dan diverifikasi langsung di Postgres: draf tersaring dari indeks aktif, penulisan ulang isi & mutasi audit ditolak `55000`, ref/version ganda dan dua baris current ditolak `23505`, pensiun sumber mengosongkan indeks. Data uji dibersihkan setelah verifikasi.
+
 ### 2026-07-29 · [Sprint 03 — photo-quality](../sprint/active/03-photo-quality/sprint.md) · Task: [01 — Upload Endpoint + Quality Gate](../sprint/active/03-photo-quality/backend/01-upload-quality-gate.md) · ✅ Done
 
 **Event:** Task completed

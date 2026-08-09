@@ -2,7 +2,7 @@
 
 **Stack:** frontend
 **Sprint:** [`../sprint.md`](../sprint.md)
-**Status:** 📋 Planned
+**Status:** ✅ Done
 **Foundation:** no
 **Autonomous:** yes
 **Depends on:**
@@ -27,12 +27,12 @@ Layar kerja domain reviewer: pratinjau potongan (teks + penanda penyakit/tindaka
 
 ## TODOs
 
-- [ ] Approval queue with per-chunk preview + approve/reject (reason required)
-- [ ] Policy-flag control prominent when content carries dosage/brand; API rejection surfaced clearly
-- [ ] Version diff view (draf vs aktif)
-- [ ] Retrieval-test panel: disease+phase input → ranked ref codes with content preview
-- [ ] Read-only chunk preview (shareable route) incl. "versi lama — sudah diperbarui/dipensiunkan" label
-- [ ] Component tests: reason-required gating, flag control, diff render
+- [x] Approval queue with per-chunk preview + approve/reject (reason required)
+- [x] Policy-flag control prominent when content carries dosage/brand; API rejection surfaced clearly
+- [x] Version diff view (draf vs aktif)
+- [x] Retrieval-test panel: disease+phase input → ranked ref codes with content preview
+- [x] Read-only chunk preview (shareable route) incl. "versi lama — sudah diperbarui/dipensiunkan" label
+- [x] Component tests: reason-required gating, flag control, diff render
 
 ## Done when
 
@@ -42,11 +42,13 @@ Reviewer approves/rejects chunks with reasons, flags a dosage chunk, compares tw
 
 > Evidence of performed work, in order. Complete only when the header literally reads `**Status:** ✅ Done`.
 
-- [ ] All `## TODOs` items above are `[x]`
-- [ ] Done-when assertion verified
-- [ ] Header reads `**Status:** ✅ Done`
-- [ ] Changelog entry appended to `changelog/web.md` (Task completed)
+- [x] All `## TODOs` items above are `[x]`
+- [x] Done-when assertion verified
+- [x] Header reads `**Status:** ✅ Done`
+- [x] Changelog entry appended to `changelog/web.md` (Task completed)
 
 ## Notes
 
 (Append-only.)
+
+- 2026-08-08 — Halaman `/pengetahuan/review` (`pages/kb-review/` + `parts/ChunkQueueList` memakai PerfectScrollArea) dan `features/knowledge/review/`: pratinjau potongan (penanda penyakit/fase/tindakan/audiens/risiko + spanduk penanda kebijakan dan label "versi lama"), bar keputusan setujui/tolak dengan alasan WAJIB dan kontrol penanda kebijakan yang terisi otomatis dari `requiredPolicyFlag` (penolakan API ditampilkan apa adanya), tampilan banding versi baris-per-baris, dan panel uji pengambilan yang menampilkan ref code + skor + verdict narasi. Rute baca-saja `/pengetahuan/rujukan/:refCode` (`pages/kb-chunk/`) terbuka untuk semua peran login — target tautan laci rujukan Sprint 05, mendukung `?version=` untuk kutipan historis. Tes: gating alasan, kontrol penanda + penerusan ke API, render diff (10 kasus). 204 vitest hijau, tsc bersih.
