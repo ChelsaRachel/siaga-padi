@@ -23,10 +23,7 @@ export type AbstainStatus = 'yakin' | 'tidak_yakin' | 'konflik'
 export type TriageAnswer = 'ya' | 'tidak' | 'tidak_tahu'
 
 /** Where a recommendation came from (brief 03 §5.1 "Asal keluaran"). */
-export type RecommendationOrigin =
-  | 'ai_engine'
-  | 'rule_fallback'
-  | 'insufficient_evidence'
+export type RecommendationOrigin = 'ai_engine' | 'rule_fallback' | 'insufficient_evidence'
 
 export interface AnalysisCandidate {
   label: CvLabel

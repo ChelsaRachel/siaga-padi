@@ -6,10 +6,12 @@ farmer name, no phone number, no precise coordinates, no raw photo. The prompt
 is assembled in `service/recommendation.py` from those three inputs only; this
 module is the transport and knows nothing about cases.
 
-The provider is OpenRouter (the stack's sanctioned LLM gateway). The key is
-read from configuration at call time and is never logged. A missing key raises
-immediately rather than silently downgrading — a recommendation engine that
-quietly stops calling the model is worse than one that fails loudly.
+The provider is any OpenAI-compatible chat-completions gateway — OpenRouter by
+default, or a self-hosted proxy (e.g. LiteLLM) pointed to via
+`OPENROUTER_BASE_URL`. The key is read from configuration at call time and is
+never logged. A missing key raises immediately rather than silently
+downgrading — a recommendation engine that quietly stops calling the model is
+worse than one that fails loudly.
 """
 import json
 from typing import Optional
@@ -41,7 +43,11 @@ class LlmProviderNotConfigured(LlmProviderError):
 
 
 class OpenRouterClient:
-    """Minimal OpenRouter chat client returning parsed JSON content."""
+    """Minimal OpenAI-compatible chat client returning parsed JSON content.
+
+    Named for the default provider; works with any OpenAI-compatible
+    chat-completions gateway configured via OPENROUTER_BASE_URL.
+    """
 
     def __init__(
         self,

@@ -1,10 +1,5 @@
 import type { SiagaApiResponse } from '@/types/api'
-import type {
-  AnalysisResult,
-  TriageAnswer,
-  TriageQuestionSet,
-  TriageRecommendation,
-} from '@/types/siaga-triage'
+import type { AnalysisResult, TriageAnswer, TriageQuestionSet, TriageRecommendation } from '@/types/siaga-triage'
 import apiClient from './api-client'
 import { API_ENDPOINTS } from './api-endpoints'
 
@@ -30,33 +25,21 @@ export interface ISubmitAnswersPayload {
 
 export const triageService = {
   /** POST apps/cases/{id}/analysis — idempotent; runs the CV pipeline once. */
-  runAnalysis: (caseId: string): Promise<SiagaApiResponse<AnalysisResult>> =>
-    apiClient.post(API_ENDPOINTS.TRIAGE.ANALYSIS(caseId), {}),
+  runAnalysis: (caseId: string): Promise<SiagaApiResponse<AnalysisResult>> => apiClient.post(API_ENDPOINTS.TRIAGE.ANALYSIS(caseId), {}),
 
   /** GET apps/cases/{id}/analysis — 404 until the pipeline has run. */
-  getAnalysis: (caseId: string): Promise<SiagaApiResponse<AnalysisResult>> =>
-    apiClient.get(API_ENDPOINTS.TRIAGE.ANALYSIS(caseId)),
+  getAnalysis: (caseId: string): Promise<SiagaApiResponse<AnalysisResult>> => apiClient.get(API_ENDPOINTS.TRIAGE.ANALYSIS(caseId)),
 
   /** GET apps/cases/{id}/questions — the ≤5 selected questions + answers. */
-  getQuestions: (caseId: string): Promise<SiagaApiResponse<TriageQuestionSet>> =>
-    apiClient.get(API_ENDPOINTS.TRIAGE.QUESTIONS(caseId)),
+  getQuestions: (caseId: string): Promise<SiagaApiResponse<TriageQuestionSet>> => apiClient.get(API_ENDPOINTS.TRIAGE.QUESTIONS(caseId)),
 
   /** POST apps/cases/{id}/answers — partial submissions are allowed. */
-  submitAnswers: (
-    caseId: string,
-    payload: ISubmitAnswersPayload
-  ): Promise<SiagaApiResponse<TriageQuestionSet>> =>
+  submitAnswers: (caseId: string, payload: ISubmitAnswersPayload): Promise<SiagaApiResponse<TriageQuestionSet>> =>
     apiClient.post(API_ENDPOINTS.TRIAGE.ANSWERS(caseId), payload),
 
   /** POST apps/cases/{id}/recommendation — idempotent; composes once. */
-  composeRecommendation: (
-    caseId: string
-  ): Promise<SiagaApiResponse<TriageRecommendation>> =>
-    apiClient.post(API_ENDPOINTS.TRIAGE.RECOMMENDATION(caseId), {}),
+  composeRecommendation: (caseId: string): Promise<SiagaApiResponse<TriageRecommendation>> => apiClient.post(API_ENDPOINTS.TRIAGE.RECOMMENDATION(caseId), {}),
 
   /** GET apps/cases/{id}/recommendation — 404 until it is composed. */
-  getRecommendation: (
-    caseId: string
-  ): Promise<SiagaApiResponse<TriageRecommendation>> =>
-    apiClient.get(API_ENDPOINTS.TRIAGE.RECOMMENDATION(caseId)),
+  getRecommendation: (caseId: string): Promise<SiagaApiResponse<TriageRecommendation>> => apiClient.get(API_ENDPOINTS.TRIAGE.RECOMMENDATION(caseId)),
 }

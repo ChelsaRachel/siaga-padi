@@ -58,8 +58,7 @@ export const API_ENDPOINTS = {
     ANALYSIS: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/analysis`,
     QUESTIONS: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/questions`,
     ANSWERS: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/answers`,
-    RECOMMENDATION: (caseId: string) =>
-      `${SUFFIX_BASE}/cases/${caseId}/recommendation`,
+    RECOMMENDATION: (caseId: string) => `${SUFFIX_BASE}/cases/${caseId}/recommendation`,
   },
   FARMER_PROFILE: {
     UPDATE: `${SUFFIX_BASE}/farmer/profile`,
